@@ -49,21 +49,6 @@ export default function createWorldRooms(api: IWorldCreator) {
     ROOMS.addRoom(roomInfo.id, dungeon);
   });
 }
-function addTriggerEvent(
-  dng: TMapData,
-  cell: TCell,
-  type: TCellEventType,
-  tag: string[],
-  execute: () => Promise<void>
-) {
-  dng.triggers[cell.row][cell.col] = {
-    col: cell.col,
-    row: cell.row,
-    type,
-    tag,
-    execute,
-  };
-}
 function gateTrigger(
   dng: TMapData,
   cell: TCell,
@@ -82,11 +67,59 @@ function gateTrigger(
   );
 }
 
-function fillRoomWithStuff(dng: TMapData, api: IWorldCreator) {
-  addChestOnRoom(dng, api);
+function addTriggerEvent(
+  dng: TMapData,
+  cell: TCell,
+  type: TCellEventType,
+  tag: string[],
+  execute: () => Promise<void>
+) {
+  dng.triggers[cell.row][cell.col] = {
+    col: cell.col,
+    row: cell.row,
+    type,
+    tag,
+    execute,
+  };
 }
 
-function addChestOnRoom(dng: TMapData, api: IWorldCreator) {
+function fillRoomWithStuff(dng: TMapData, api: IWorldCreator) {
+  addChestOnRoom(dng);
+  addEnemyOnRoom(dng, api);
+}
+function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
+  // MAX 3 ENEMY per MAP? 80%, 40%  10%
+  // GET 3 RANDOM NOT EMPTY POSITIONS ON MAP
+  const totalEnemies = 3;
+  const tiles = MAPS[dng.textureName];
+  const cellsToUse = getCellsToUseIf(dng.data[0], tiles.ground[0]);
+
+  const addEnemyAt = (cell: TCell) => {
+    dng.data[1][cell.row][cell.col] = TILES.frames.enemy;
+    dng.walls[cell.row][cell.col] = 0;
+    let triggered = false;
+    addTriggerEvent(
+      dng,
+      cell,
+      TCellEventType.WALK,
+      [`enemy-${dng.roomId}`],
+      async () => {
+        if (triggered) {
+          return;
+        }
+        triggered = true;
+        console.log("triggered");
+        api.openBattle()
+      }
+    );
+  };
+  iterateCount(totalEnemies, () => {
+    const idx = random(0, cellsToUse.length - 1);
+    const cell: TCell = cellsToUse.splice(idx, 1)[0];
+    addEnemyAt(cell);
+  });
+}
+function addChestOnRoom(dng: TMapData) {
   // MAX 3 CHEST per MAP? 80%, 40%  10%
   // GET 3 RANDOM NOT EMPTY POSITIONS ON MAP
   const cellsToUse = getCellsToUseIf(dng.walls, 1);
