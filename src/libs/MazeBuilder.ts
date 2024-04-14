@@ -1,11 +1,14 @@
 // Original JavaScript code by Chirp Internet: chirpinternet.eu
 // Please acknowledge use of this code by including this header.
+const WALL = 1;
 class MazeBuilder {
   width: number;
   height: number;
   cols: number;
   rows: number;
   maze: any;
+  entrance: any;
+  exit: any;
   constructor(cols: number, rows: number) {
     this.width = Math.floor(cols / 2) - 1;
     this.height = Math.floor(rows / 2) - 1;
@@ -13,7 +16,7 @@ class MazeBuilder {
     this.cols = cols;
     this.rows = rows;
 
-    this.maze = this.initArray([]);
+    this.maze = this.initArray(0);
 
     // place initial walls
     this.maze.forEach((row, r) => {
@@ -21,30 +24,32 @@ class MazeBuilder {
         switch (r) {
           case 0:
           case this.rows - 1:
-            this.maze[r][c] = ["wall"];
+            this.maze[r][c] = WALL;
             break;
 
           default:
             if (r % 2 == 1) {
               if (c == 0 || c == this.cols - 1) {
-                this.maze[r][c] = ["wall"];
+                this.maze[r][c] = WALL;
               }
             } else if (c % 2 == 0) {
-              this.maze[r][c] = ["wall"];
+              this.maze[r][c] = WALL;
             }
         }
       });
 
       if (r == 0) {
         // place exit in top row
-        let doorPos = this.posToSpace(this.rand(1, this.width));
-        this.maze[r][doorPos] = ["exit"];
+        let doorPos = this.posToSpace(this.rand(2, this.width - 2));
+        this.maze[r][doorPos] = 0;
+        this.exit = { col: doorPos, row: r };
       }
 
       if (r == this.rows - 1) {
         // place entrance in bottom row
-        let doorPos = this.posToSpace(this.rand(1, this.width));
-        this.maze[r][doorPos] = ["entrance"];
+        let doorPos = this.posToSpace(this.rand(2, this.width - 2));
+        this.maze[r][doorPos] = 0;
+        this.entrance = { col: doorPos, row: r };
       }
     });
 
@@ -122,7 +127,7 @@ class MazeBuilder {
     for (let i = this.posToWall(r1) - 1; i <= this.posToWall(r2) + 1; i++) {
       for (let j = this.posToWall(c1) - 1; j <= this.posToWall(c2) + 1; j++) {
         if (i == this.posToWall(horiz) || j == this.posToWall(vert)) {
-          this.maze[i][j] = ["wall"];
+          this.maze[i][j] = WALL;
         }
       }
     }
@@ -133,22 +138,22 @@ class MazeBuilder {
 
     if (gaps[0]) {
       let gapPosition = this.rand(c1, vert);
-      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = [];
+      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = 0;
     }
 
     if (gaps[1]) {
       let gapPosition = this.rand(vert + 1, c2 + 1);
-      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] = [];
+      this.maze[this.posToWall(horiz)][this.posToSpace(gapPosition)] =0;
     }
 
     if (gaps[2]) {
       let gapPosition = this.rand(r1, horiz);
-      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] = [];
+      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] =0;
     }
 
     if (gaps[3]) {
       let gapPosition = this.rand(horiz + 1, r2 + 1);
-      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] = [];
+      this.maze[this.posToSpace(gapPosition)][this.posToWall(vert)] =0;
     }
 
     // recursively partition newly created chambers
@@ -200,5 +205,9 @@ class MazeBuilder {
 
 export default function generateMaze(width: number, height: number) {
   const mazeBuilder = new MazeBuilder(width, height);
-  return mazeBuilder.maze;
+  return {
+    entrance: mazeBuilder.entrance,
+    exit: mazeBuilder.exit,
+    walls: mazeBuilder.maze,
+  };
 }

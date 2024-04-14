@@ -1,9 +1,9 @@
 
 # h1-> MAPA
 - necesito un maptile que genere un laberinto aleatorio ✅
-- necesito un player que se pueda desplazar por el laberinto teniendo en cuenta los choques.
-- necesito marcado un camino hacia la salida
-- necesito que los pisos esten conectados
+- necesito un player que se pueda desplazar por el laberinto teniendo en cuenta los choques.✅
+- necesito marcado un camino hacia la salida ✅
+- necesito que pueda cambiar de  pisos al llegar al final y regresar al anterior al ponerse al principio✅
 - necesito un player que se pueda desplazar en el piso y tenga eventos en cada toque, los eventos por ahora solo deben mandar un mensaje en pantalla.
 
 # h2-> BATALLA

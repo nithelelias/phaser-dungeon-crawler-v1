@@ -1,29 +1,30 @@
-import moveToCell from "../behaviors/actions";
+import { moveToCell } from "../behaviors/actions";
 import { TILES } from "../data/resources";
+import EventSystem from "../systems/eventSystem";
 import { TCell } from "../types/types";
+import { getCoordsOfCell, isWalkAble } from "../utils/functions";
 import initController, { TKeyControlMap } from "./controller";
-import Room from "./room";
 
-class Player {
+export class Player {
   scene: Phaser.Scene;
   sprite: Phaser.GameObjects.Sprite;
   position: TCell;
-  constructor(scene: Phaser.Scene, position: TCell) {
+  constructor(scene: Phaser.Scene) {
     this.scene = scene;
-    this.position = position;
-    const coords = Room.getCoordsOfCell(position.col, position.row);
+    this.position = { col: 0, row: 0 };
+
     this.sprite = scene.add
-      .sprite(coords.x, coords.y, TILES.name, TILES.frames.charactes.default)
+      .sprite(0, 0, TILES.name, TILES.frames.charactes.default)
       .setOrigin(0);
   }
   setPosition(position: TCell) {
     this.position = position;
-    const coords = Room.getCoordsOfCell(position.col, position.row);
+    const coords = getCoordsOfCell(position.col, position.row);
     this.sprite.setPosition(coords.x, coords.y);
   }
 }
 
-function controlMovePlayer(player: Player, room: Room) {
+function controlMovePlayer(player: Player) {
   let actionLock = false;
 
   initController(
@@ -32,6 +33,7 @@ function controlMovePlayer(player: Player, room: Room) {
       if (actionLock) return;
 
       const desirePosition = { ...player.position };
+
       if (keydown.left) {
         desirePosition.col -= 1;
       }
@@ -44,24 +46,21 @@ function controlMovePlayer(player: Player, room: Room) {
       if (keydown.down) {
         desirePosition.row += 1;
       }
-      if (room.isWall(desirePosition.col, desirePosition.row)) {
+      if (!isWalkAble(desirePosition.col, desirePosition.row)) {
         return;
       }
       actionLock = true;
       moveToCell(player, desirePosition).then(() => {
         actionLock = false;
         player.setPosition(desirePosition);
+        EventSystem.current.playerMoved(desirePosition);
       });
     }
   );
 }
 
-export default function createPlayer(
-  scene: Phaser.Scene,
-  room: Room,
-  startCell: TCell
-) {
-  const player = new Player(scene, startCell);
-  controlMovePlayer(player, room);
+export default function createPlayer(scene: Phaser.Scene) {
+  const player = new Player(scene);
+  controlMovePlayer(player);
   return player;
 }

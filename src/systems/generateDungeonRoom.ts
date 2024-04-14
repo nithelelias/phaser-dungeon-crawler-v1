@@ -1,75 +1,115 @@
-import RoomRender from "../components/RoomRender";
-import Room from "../components/room";
-import { TILESIZE } from "../data/constants";
-
 import { MAPS, TILES } from "../data/resources";
 import generateMaze from "../libs/MazeBuilder";
-import { TCell, TMapData } from "../types/types";
+import PathFind from "../libs/pathFind";
+import { TCell, TCellEventType, TMapData } from "../types/types";
 import random from "../utils/random";
 
+function iterateMatrixDataMap(
+  matrixMap: number[][],
+  callback: (first: number, second: number, props: any) => void
+) {
+  matrixMap.forEach((innerArray: number[], first: number) => {
+    innerArray.forEach((content: any, second: number) => {
+      callback(first, second, content);
+    });
+  });
+}
+
 export default function generateDungeonRoom(
-  scene: Phaser.Scene,
-  roomIdName: string
-): Room {
-  if (!MAPS.hasOwnProperty(roomIdName)) {
+  roomId: string,
+  mapTileName: string
+): TMapData {
+  if (!MAPS.hasOwnProperty(mapTileName)) {
     throw new Error("Room not found");
   }
+  const totalCols = 14; // random(10, 20);
+  const totalRows = 17; //random(10, 20);
+  const initArray = (value: any = 0) =>
+    new Array(totalRows).fill(null).map(() => new Array(totalCols).fill(value));
+  const maze = generateMaze(totalCols, totalRows);
+  const tiles = MAPS[mapTileName];
+  const data = initArray();
+  const dataWalls = initArray();
+  const triggers = initArray(null)
+  const isContain = (col: number, row: number) =>
+    col >= 0 && col < totalCols && row >= 0 && row < totalRows;
+  const getFrameByType = (frameType: number, cell: TCell) => {
+    if (frameType === 2) {
+      // WALLS
+      const walls = tiles.walls;
+      const corners = tiles.corners;
+      if (cell.col === 0 && cell.row === 0) return corners[0];
+      if (cell.col === 0 && cell.row === totalRows - 1) return corners[3];
+      if (cell.col === totalCols - 1 && cell.row === 0) return corners[1];
+      if (cell.col === totalCols - 1 && cell.row === totalRows - 1)
+        return corners[2];
 
-  const roomWalls: TCell[] = [];
-  const maze = generateMaze(random(10, 20), random(10, 20));
-
-  const roomInfo: TMapData = {
-    cols: maze[0].length,
-    rows: maze.length,
-    tileSize: TILESIZE,
-    tiles: MAPS[roomIdName],
-    data: [],
-  };
-
-  const exitCell = {
-    col: 0,
-    row: 0,
-  };
-  const entranceCell = {
-    col: 0,
-    row: 0,
-  };
-  const getFrameByCell = (cell: string[]) => {
-    if (cell[0] === "wall" && random(0, 10) > 2) {
-      return 1; //
+      if (cell.row === 0 && cell.col > 0 && cell.col < totalCols - 1) {
+        return walls[0][0];
+      }
+      if (
+        cell.row === totalRows - 1 &&
+        cell.col > 0 &&
+        cell.col < totalCols - 1
+      ) {
+        return walls[1][0];
+      }
+      if (cell.col === 0 && cell.row > 0 && cell.row < totalRows - 1) {
+        return walls[2][0];
+      }
+      if (
+        cell.col === totalCols - 1 &&
+        cell.row > 0 &&
+        cell.row < totalRows - 1
+      ) {
+        return walls[3][0];
+      }
+      return tiles.blocks[0];
     }
 
-    return 0;
+    if (frameType === 1) {
+      return tiles.blocks[random(0, tiles.blocks.length - 1)];
+    }
+
+    return tiles.ground[0];
   };
-  maze.forEach((row: [], j: number) => {
-    const cells: number[] = [];
-    row.forEach((cell: string[], i: number) => {
-      const frame = getFrameByCell(cell);
-      const isWall = frame === 1;
-      if (isWall || i === 0 || j === 0) {
-        roomWalls.push({
-          col: i,
-          row: j,
-        });
-      }
-      cells.push(frame);
-      if (cell[0] === "entrance") {
-        entranceCell.col = i;
-        entranceCell.row = j;
-      }
-      if (cell[0] === "exit") {
-        exitCell.col = i;
-        exitCell.row = j;
-      }
-    });
-    roomInfo.data.push(cells);
+  const path = PathFind(
+    { x: maze.entrance.col, y: maze.entrance.row },
+    { x: maze.exit.col, y: maze.exit.row },
+    (x: number, y: number) => {
+      return isContain(x, y) && maze.walls[y][x] === 0;
+    }
+  );
+  iterateMatrixDataMap(maze.walls, (row: number, col: number, cell: number) => {
+    try {
+      const isOnBorder =
+        col === 0 ||
+        col === totalCols - 1 ||
+        row === 0 ||
+        row === totalRows - 1;
+      const isGate =
+        (row === maze.entrance.row && col === maze.entrance.col) ||
+        (row === maze.exit.row && col === maze.exit.col);
+      const frame = isOnBorder && !isGate ? 2 : cell;
+      data[row][col] = getFrameByType(frame, { col, row });
+      dataWalls[row][col] = frame ? 1 : 0; //frameType === 1 ? 1 : 0;
+    } catch (e) {
+      console.log({ col, row, totalCols, totalRows }, e);
+    }
   });
-  const roomRender = new RoomRender(scene, TILES.name, roomInfo);
-  roomRender.groundLayer?.putTileAt(1, exitCell.col, exitCell.row);
-  roomRender.groundLayer?.putTileAt(2, entranceCell.col, entranceCell.row);
 
-  const room = new Room(roomInfo, entranceCell, exitCell);
+  path.forEach((p: { x: number; y: number }) => {
+    data[p.y][p.x] = TILES.frames.__WHITE;
+  });
 
-  room.setRoomHitTest(roomWalls);
-  return room;
+  return {
+    roomId,
+    cols: totalCols,
+    rows: totalRows,
+    entrance: maze.entrance,
+    exit: maze.exit,
+    triggers,
+    data,
+    walls: dataWalls,
+  };
 }
