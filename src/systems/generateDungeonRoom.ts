@@ -1,7 +1,7 @@
 import { MAPS, TILES } from "../data/resources";
 import generateMaze from "../libs/MazeBuilder";
 import PathFind from "../libs/pathFind";
-import { TCell, TCellEventType, TMapData } from "../types/types";
+import { TCell, TMapData } from "../types/types";
 import random from "../utils/random";
 
 function iterateMatrixDataMap(
@@ -17,9 +17,9 @@ function iterateMatrixDataMap(
 
 export default function generateDungeonRoom(
   roomId: string,
-  mapTileName: string
+  textureName: string
 ): TMapData {
-  if (!MAPS.hasOwnProperty(mapTileName)) {
+  if (!MAPS.hasOwnProperty(textureName)) {
     throw new Error("Room not found");
   }
   const totalCols = 14; // random(10, 20);
@@ -27,10 +27,13 @@ export default function generateDungeonRoom(
   const initArray = (value: any = 0) =>
     new Array(totalRows).fill(null).map(() => new Array(totalCols).fill(value));
   const maze = generateMaze(totalCols, totalRows);
-  const tiles = MAPS[mapTileName];
-  const data = initArray();
+  const tiles = MAPS[textureName];
+  const data = [
+    initArray(TILES.frames.__EMPTY),
+    initArray(TILES.frames.__EMPTY),
+  ];
   const dataWalls = initArray();
-  const triggers = initArray(null)
+  const triggers = initArray(null);
   const isContain = (col: number, row: number) =>
     col >= 0 && col < totalCols && row >= 0 && row < totalRows;
   const getFrameByType = (frameType: number, cell: TCell) => {
@@ -91,7 +94,7 @@ export default function generateDungeonRoom(
         (row === maze.entrance.row && col === maze.entrance.col) ||
         (row === maze.exit.row && col === maze.exit.col);
       const frame = isOnBorder && !isGate ? 2 : cell;
-      data[row][col] = getFrameByType(frame, { col, row });
+      data[0][row][col] = getFrameByType(frame, { col, row });
       dataWalls[row][col] = frame ? 1 : 0; //frameType === 1 ? 1 : 0;
     } catch (e) {
       console.log({ col, row, totalCols, totalRows }, e);
@@ -99,10 +102,12 @@ export default function generateDungeonRoom(
   });
 
   path.forEach((p: { x: number; y: number }) => {
-    data[p.y][p.x] = TILES.frames.__WHITE;
+    data[0][p.y][p.x] = TILES.frames.__WHITE;
   });
 
   return {
+    dirty: true,
+    textureName,
     roomId,
     cols: totalCols,
     rows: totalRows,

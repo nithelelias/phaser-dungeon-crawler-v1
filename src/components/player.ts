@@ -29,7 +29,7 @@ function controlMovePlayer(player: Player) {
 
   initController(
     player.scene,
-    (keydown: TKeyControlMap, event: KeyboardEvent) => {
+    (keydown: TKeyControlMap) => {
       if (actionLock) return;
 
       const desirePosition = { ...player.position };

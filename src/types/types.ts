@@ -1,3 +1,4 @@
+export type TMatrixMap = number[][];
 export type TMapTiles = {
   ground: number[];
   walls: number[][];
@@ -6,13 +7,15 @@ export type TMapTiles = {
 };
 export type TMapData = {
   roomId: string;
+  textureName:string;
   cols: number;
   rows: number;
-  data: number[][];
-  walls: number[][];
+  data: TMatrixMap[];
+  walls: TMatrixMap;
   entrance: TCell;
   exit: TCell;
   triggers: TCellEvent[][];
+  dirty: boolean;
 };
 
 export type TCell = {
@@ -33,6 +36,7 @@ export type TCellEvent = {
   col: number;
   row: number;
   type: TCellEventType;
+  tag: string[];
   execute: () => Promise<void>;
 };
 export type TEntity = {

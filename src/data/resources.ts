@@ -7,6 +7,9 @@ export const TILES = {
   frames: {
     blocked: 0,
     __WHITE: 29,
+    __EMPTY:13,
+    chest: 156,
+    chest_open: 157,
     charactes: {
       default: 399,
     },
