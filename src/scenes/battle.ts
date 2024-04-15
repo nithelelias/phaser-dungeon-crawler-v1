@@ -82,12 +82,12 @@ export default class BattleScene extends Phaser.Scene {
       .rectangle(0, 0, this.scale.width, this.scale.height, 0x111111, 0.8)
       .setOrigin(0);
 
-    this.cameras.main.setZoom(2);
+    //this.cameras.main.setZoom(2);
     const turnManager = new TurnManager();
     const escapeButton = new EscapeButton(
       this,
       this.scale.width / 2,
-      this.scale.height / 2 + 100,
+      this.scale.height / 2 + 300,
 
       () => {
         turnManager.stop();
@@ -95,6 +95,10 @@ export default class BattleScene extends Phaser.Scene {
       }
     );
     const entityList: { entity: BEntity; turnInfo: ITurnAction }[] = [];
+    const entitysContainer = this.add.container(
+      this.scale.width / 2,
+      this.scale.height / 2
+    ).setScale(3)
     this.createEntities().forEach((entity: BEntity) => {
       const turnInfo = {
         name: entity.info.name,
@@ -104,8 +108,10 @@ export default class BattleScene extends Phaser.Scene {
       };
       entityList.push({ entity, turnInfo });
       turnManager.addToQueue(turnInfo);
+      
+      entitysContainer.add(entity)
     });
-
+    
     turnManager.onTurnEnd(() => {
       let totalEnemiesEntities = 0;
       let totalPlayersEntities = 0;
@@ -122,49 +128,36 @@ export default class BattleScene extends Phaser.Scene {
         }
       });
       if (totalEnemiesEntities === 0) {
-        escapeButton.destroy()
+        escapeButton.destroy();
         this.endBattle(true);
         turnManager.stop();
       }
       if (totalPlayersEntities === 0) {
-        escapeButton.destroy()
+        escapeButton.destroy();
         this.endBattle(false);
         turnManager.stop();
       }
     });
-    turnManager.nextTurn();
+     turnManager.nextTurn();
   }
   createEntities() {
     if (!this.battleProps) {
       return [];
     }
     const { mobs } = this.battleProps;
-    const center = {
-      x: this.scale.width / 2,
-      y: this.scale.height / 2,
-    };
+
     const playerData: TDataEntity = {
       name: "Player",
       texture: TILES.frames.charactes.default,
       ...player.getStats(),
     };
-    const playerEntity = new BEntity(
-      this,
-      center.x - 100,
-      center.y,
-      playerData
-    );
+    const playerEntity = new BEntity(this, -100, 0, playerData);
     playerEntity.isEnemy = false;
     const zones = BATTLE_MOBS_ZONES[Math.min(5, mobs.length)];
     const entityList = [playerEntity];
     mobs.forEach((data: TDataEntity, idx: number) => {
       const offset = zones[idx];
-      const mobEntity = new BEntity(
-        this,
-        center.x + offset.x,
-        center.y + offset.y,
-        data
-      );
+      const mobEntity = new BEntity(this, offset.x, offset.y, data);
       mobEntity.setTarget([playerEntity]);
       playerEntity.pushTarget(mobEntity);
       entityList.push(mobEntity);

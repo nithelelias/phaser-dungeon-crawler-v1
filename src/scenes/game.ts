@@ -5,6 +5,7 @@ import EventSystem from "../systems/eventSystem";
 import RenderMapSystem from "../systems/renderMapSystem";
 import createWorldRooms from "../systems/worldCreator";
 import { TCell, TDataEntity } from "../types/types";
+import LifeBar from "../ui/lifeBar";
 
 export default class GameScene extends Phaser.Scene {
   player: Player | null = null;
@@ -29,6 +30,9 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.main.setZoom(5).startFollow(this.player.sprite);
 
     this.loadRoom("floor1");
+
+    const life=new LifeBar(this,this.player.sprite.x,this.player.sprite.y,3,3)
+    window.$foo=()=>life
   }
   loadRoom(roomId: string, entryPosition?: TCell) {
     const roomData = ROOMS.setCurrent(roomId)!;

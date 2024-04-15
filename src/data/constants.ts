@@ -14,8 +14,9 @@ const color = (hexa: string, int: number) => {
 export const COLORS = {
   black: color("#000000", 0x000000),
   white: color("#ffffff", 0xffffff),
-  primary: color("#48d6d2", 0x48d6d2),
-  secundary: color("#fefcbf", 0xfefcbf),
+  red: color("#e74645", 0xe74645),
+  primary: color("#1ac0c6", 0x1ac0c6),
+  secundary: color("#fefcbf", 0xfacd60),
 };
 export const BATTLE_MOBS_ZONES: Record<number, { x: number; y: number }[]> = {
   1: [
