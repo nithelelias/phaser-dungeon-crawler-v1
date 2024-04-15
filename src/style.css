@@ -1,3 +1,15 @@
+@font-face {
+  font-family: "arcade";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Arcade Rounded"), url("resources/fonts/arcade/ARCADE_R.woff") format("woff");
+}
+@font-face {
+  font-family: "oswald";
+  font-style: normal;
+  font-weight: normal;
+  src: local("Arcade Rounded"), url("resources/fonts/oswald/oswald_wght.ttf") format("trueformat");
+}
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

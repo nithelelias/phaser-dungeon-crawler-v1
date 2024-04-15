@@ -7,7 +7,7 @@ export type TMapTiles = {
 };
 export type TMapData = {
   roomId: string;
-  textureName:string;
+  textureName: string;
   cols: number;
   rows: number;
   data: TMatrixMap[];
@@ -42,4 +42,13 @@ export type TCellEvent = {
 export type TEntity = {
   position: TCell;
   sprite: Phaser.GameObjects.GameObject;
+};
+
+export type TDataEntity = {
+  name: string;
+  texture: number;
+  level: number; 
+  hp: number;
+  speed: number;
+  attack: number;
 };

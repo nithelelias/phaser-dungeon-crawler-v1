@@ -1,11 +1,10 @@
 import createPlayer, { Player } from "../components/player";
 
-import ROOMS from "../context/rooms";
-import { TILES } from "../data/resources";
+import ROOMS from "../context/rooms"; 
 import EventSystem from "../systems/eventSystem";
 import RenderMapSystem from "../systems/renderMapSystem";
 import createWorldRooms from "../systems/worldCreator";
-import { TCell } from "../types/types";
+import { TCell, TDataEntity } from "../types/types";
 
 export default class GameScene extends Phaser.Scene {
   player: Player | null = null;
@@ -14,7 +13,6 @@ export default class GameScene extends Phaser.Scene {
     super({ key: "game" });
   }
   preload() {
-    this.load.spritesheet(TILES.name, TILES.src, TILES.config);
     this.preCreateMaps();
   }
   preCreateMaps() {
@@ -54,11 +52,14 @@ export default class GameScene extends Phaser.Scene {
     });
   }
 
-  openBattle() {
+  openBattle(mobs: TDataEntity[]) {
+    this.cameras.main.postFX.addBlur(12);
     this.scene.pause("game");
     this.scene.run("battle", {
+      mobs,
       callback: () => {
         this.scene.resume("game");
+        this.cameras.main.postFX.clear();
       },
     });
   }

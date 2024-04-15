@@ -9,10 +9,10 @@
 # h2-> BATALLA
 - necesito que se pueda ubicar un enemigo en pantalla ✅
 - necesito que el player al tocar un enemigo en el mapa abra una escena de batallas ✅
-- necesito una escena de batalla entre el player y entidades enemigas que funcione automaticamente (sin  intervencion del player) = auto-battler
-- la batalla debe ser coordinada por turnos.
-- la batalla se pueda pausar , aumentar velocidad o normalizar velocidad.
-- el player debe poder escapar de la batalla y regresar al mapa
+- necesito una escena de batalla entre el player y entidades enemigas que funcione automaticamente (sin  intervencion del player) = auto-battler ✅
+- la batalla debe ser coordinada por turnos.✅
+- la batalla se pueda pausar , aumentar velocidad o normalizar velocidad. ❎❌
+- el player debe poder escapar de la batalla y regresar al mapa✅
 
 # h3 -> VIDA
 - los mobs y el player tendran una propiedad vida 

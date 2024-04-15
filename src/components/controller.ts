@@ -1,14 +1,6 @@
+import { CONTROLS } from "../data/constants";
+
 export type TKeyControlMap = Record<string, boolean>;
-const CONTROL: Record<string, string> = {
-  ArrowLeft: "left",
-  a: "left",
-  ArrowRight: "right",
-  d: "right",
-  ArrowUp: "up",
-  w: "up",
-  ArrowDown: "down",
-  s: "down",
-};
 function keyListen(event: KeyboardEvent) {
   const keymap: TKeyControlMap = {
     left: false,
@@ -16,8 +8,8 @@ function keyListen(event: KeyboardEvent) {
     up: false,
     down: false,
   };
-  if (CONTROL.hasOwnProperty(event.key)) {
-    const direction = CONTROL[event.key.toString()];
+  if (CONTROLS.hasOwnProperty(event.key)) {
+    const direction = CONTROLS[event.key.toString()];
     keymap[direction] = true;
   }
   return keymap;

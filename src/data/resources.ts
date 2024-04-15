@@ -13,6 +13,7 @@ export const TILES = {
     enemy: 525,
     charactes: {
       default: 399,
+      rat:437
     },
   },
 };

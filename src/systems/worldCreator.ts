@@ -1,12 +1,13 @@
 import ROOMS from "../context/rooms";
 import { MAPS, TILES } from "../data/resources";
-import { TCell, TCellEventType, TMapData } from "../types/types";
+import { TCell, TCellEventType, TDataEntity, TMapData } from "../types/types";
 import iterateCount from "../utils/iterateCount";
 import random from "../utils/random";
 import generateDungeonRoom from "./generateDungeonRoom";
 
 interface IWorldCreator {
   loadRoom: (roomId: string, entryPosition: TCell) => void;
+  openBattle: (mobs: TDataEntity[]) => void;
 }
 export default function createWorldRooms(api: IWorldCreator) {
   const rooms = [
@@ -87,38 +88,32 @@ function fillRoomWithStuff(dng: TMapData, api: IWorldCreator) {
   addChestOnRoom(dng);
   addEnemyOnRoom(dng, api);
 }
-function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
-  // MAX 3 ENEMY per MAP? 80%, 40%  10%
-  // GET 3 RANDOM NOT EMPTY POSITIONS ON MAP
-  const totalEnemies = 3;
-  const tiles = MAPS[dng.textureName];
-  const cellsToUse = getCellsToUseIf(dng.data[0], tiles.ground[0]);
 
-  const addEnemyAt = (cell: TCell) => {
-    dng.data[1][cell.row][cell.col] = TILES.frames.enemy;
-    dng.walls[cell.row][cell.col] = 0;
-    let triggered = false;
-    addTriggerEvent(
-      dng,
-      cell,
-      TCellEventType.WALK,
-      [`enemy-${dng.roomId}`],
-      async () => {
-        if (triggered) {
-          return;
-        }
-        triggered = true;
-        console.log("triggered");
-        api.openBattle()
-      }
-    );
+function getCellsToUseIf(matrixMap: number[][], value: number = 0) {
+  const freeToUse: TCell[] = [];
+  const totals = {
+    cols: matrixMap[0].length - 1,
+    rows: matrixMap.length - 1,
   };
-  iterateCount(totalEnemies, () => {
-    const idx = random(0, cellsToUse.length - 1);
-    const cell: TCell = cellsToUse.splice(idx, 1)[0];
-    addEnemyAt(cell);
+  matrixMap.forEach((rowList, row) => {
+    rowList.forEach((cell, col) => {
+      if (
+        col > 0 &&
+        row > 0 &&
+        row < totals.rows &&
+        col < totals.cols &&
+        cell === value
+      ) {
+        freeToUse.push({
+          col,
+          row,
+        });
+      }
+    });
   });
+  return freeToUse;
 }
+
 function addChestOnRoom(dng: TMapData) {
   // MAX 3 CHEST per MAP? 80%, 40%  10%
   // GET 3 RANDOM NOT EMPTY POSITIONS ON MAP
@@ -151,28 +146,45 @@ function addChestOnRoom(dng: TMapData) {
     addChestAt(cell);
   });
 }
-
-function getCellsToUseIf(matrixMap: number[][], value: number = 0) {
-  const freeToUse: TCell[] = [];
-  const totals = {
-    cols: matrixMap[0].length - 1,
-    rows: matrixMap.length - 1,
+function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
+  // MAX 3 ENEMY per MAP? 80%, 40%  10%
+  // GET 3 RANDOM NOT EMPTY POSITIONS ON MAP
+  const totalEnemies = 3;
+  const tiles = MAPS[dng.textureName];
+  const cellsToUse = getCellsToUseIf(dng.data[0], tiles.ground[0]);
+  const MOBTEMPLATE = {
+    name: "rat",
+    texture: TILES.frames.charactes.rat,
+    hp: 2,
+    attack: 1,
+    speed: 1,
+    level: 1,
   };
-  matrixMap.forEach((rowList, row) => {
-    rowList.forEach((cell, col) => {
-      if (
-        col > 0 &&
-        row > 0 &&
-        row < totals.rows &&
-        col < totals.cols &&
-        cell === value
-      ) {
-        freeToUse.push({
-          col,
-          row,
-        });
+  const addEnemyAt = (cell: TCell) => {
+    dng.data[1][cell.row][cell.col] = TILES.frames.enemy;
+    dng.walls[cell.row][cell.col] = 0;
+    let triggered = false;
+    const mobs: TDataEntity[] = new Array(random(1, 3))
+      .fill(null)
+      .map(() => ({ ...MOBTEMPLATE, hp: random(1, 3) }));
+    addTriggerEvent(
+      dng,
+      cell,
+      TCellEventType.WALK,
+      [`enemy-${dng.roomId}`],
+      async () => {
+        if (triggered) {
+          return;
+        }
+        triggered = true;
+        console.log("triggered");
+        api.openBattle(mobs);
       }
-    });
+    );
+  };
+  iterateCount(totalEnemies, () => {
+    const idx = random(0, cellsToUse.length - 1);
+    const cell: TCell = cellsToUse.splice(idx, 1)[0];
+    addEnemyAt(cell);
   });
-  return freeToUse;
 }
