@@ -15,9 +15,9 @@
 - el player debe poder escapar de la batalla y regresar al mapa✅
 
 # h3 -> VIDA
-- los mobs y el player tendran una propiedad vida ✅
+- los mobs y el player tendran una propiedad vida que sera visible en un lifebar ✅
 - la batalla debe terminar si todos los mobs tiene la vida = 0 y el player regresara al mapa.✅
-- al morir el jugador debe saltar una escena de muerte y se debe volver a comenzar el juego. 
+- al morir el jugador debe saltar una escena de muerte y se debe volver a comenzar el juego. ✅
 
 
 # h4 -> ATRIBUTOS de Batalla

@@ -1,6 +1,6 @@
 import createPlayer, { Player } from "../components/player";
 
-import ROOMS from "../context/rooms"; 
+import ROOMS from "../context/rooms";
 import EventSystem from "../systems/eventSystem";
 import RenderMapSystem from "../systems/renderMapSystem";
 import createWorldRooms from "../systems/worldCreator";
@@ -30,9 +30,10 @@ export default class GameScene extends Phaser.Scene {
     this.cameras.main.setZoom(5).startFollow(this.player.sprite);
 
     this.loadRoom("floor1");
-
-    const life=new LifeBar(this,this.player.sprite.x,this.player.sprite.y,3,3)
-    window.$foo=()=>life
+    this.events.on("shutdown", () => {
+      console.log("shutted down");
+      // this.events.removeAllListeners()
+    });
   }
   loadRoom(roomId: string, entryPosition?: TCell) {
     const roomData = ROOMS.setCurrent(roomId)!;
@@ -44,6 +45,7 @@ export default class GameScene extends Phaser.Scene {
     EventSystem.current.onPlayerMoved(() => {
       //dungeonRoom.stop();
       const position = player.position;
+
       try {
         const event = roomData.triggers[position.row][position.col];
         if (event) {
@@ -61,7 +63,12 @@ export default class GameScene extends Phaser.Scene {
     this.scene.pause("game");
     this.scene.run("battle", {
       mobs,
-      callback: () => {
+      callback: ({ win, escaped }: { escaped: boolean; win: boolean }) => {
+        if (!win && !escaped) {
+          this.scene.run("endgame", { win: false });
+
+          return;
+        }
         this.scene.resume("game");
         this.cameras.main.postFX.clear();
       },

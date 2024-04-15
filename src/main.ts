@@ -4,6 +4,8 @@ import GameScene from "./scenes/game";
 import MapToolScene from "./scenes/maptool";
 import BattleScene from "./scenes/battle";
 import Boot from "./scenes/boot";
+import EndGame from "./scenes/endGame";
+import IntroScene from "./scenes/intro";
 
 const game = new Phaser.Game({
   width: 1440,
@@ -14,8 +16,8 @@ const game = new Phaser.Game({
   scale: {
     mode: Phaser.Scale.FIT,
   },
-  scene: [Boot, GameScene, BattleScene, MapToolScene],
+  scene: [Boot,IntroScene, GameScene, BattleScene, EndGame, MapToolScene],
 });
 Boot.onEnd = () => {
-  game.scene.start("game");
+  game.scene.start("intro");
 };

@@ -27,10 +27,25 @@ export default class RenderMapSystem {
       map.createBlankLayer("layer0", tileset, 0, 0)!,
       map.createBlankLayer("layer1", tileset, 0, 0)!,
     ];
+    const unbindListener = () => {
+      
+      scene.events.off("update", this.update, this);
+    };
     scene.events.on("update", this.update, this);
+    scene.events.on(
+      "shutdown",
+      () => {
+        unbindListener();
+      },
+      this
+    );
   }
   static create(scene: Phaser.Scene) {
     return new RenderMapSystem(scene);
+  }
+  destroy() {
+    this.map.destroy();
+    this.layers = [];
   }
   update() {
     const room = ROOMS.getCurrent();

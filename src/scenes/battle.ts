@@ -66,9 +66,12 @@ function createBattleTurn(entity: BEntity) {
     await returnToSpawn();
   };
 }
-
+type TCallbackProps = {
+  escaped: boolean;
+  win: boolean;
+};
 export interface IBattleProps {
-  callback: () => void;
+  callback: ({ win, escaped }: TCallbackProps) => void;
   mobs: TDataEntity[];
 }
 export default class BattleScene extends Phaser.Scene {
@@ -95,10 +98,9 @@ export default class BattleScene extends Phaser.Scene {
       }
     );
     const entityList: { entity: BEntity; turnInfo: ITurnAction }[] = [];
-    const entitysContainer = this.add.container(
-      this.scale.width / 2,
-      this.scale.height / 2
-    ).setScale(3)
+    const entitysContainer = this.add
+      .container(this.scale.width / 2, this.scale.height / 2)
+      .setScale(3);
     this.createEntities().forEach((entity: BEntity) => {
       const turnInfo = {
         name: entity.info.name,
@@ -108,10 +110,10 @@ export default class BattleScene extends Phaser.Scene {
       };
       entityList.push({ entity, turnInfo });
       turnManager.addToQueue(turnInfo);
-      
-      entitysContainer.add(entity)
+
+      entitysContainer.add(entity);
     });
-    
+
     turnManager.onTurnEnd(() => {
       let totalEnemiesEntities = 0;
       let totalPlayersEntities = 0;
@@ -138,7 +140,7 @@ export default class BattleScene extends Phaser.Scene {
         turnManager.stop();
       }
     });
-     turnManager.nextTurn();
+    turnManager.nextTurn();
   }
   createEntities() {
     if (!this.battleProps) {
@@ -181,7 +183,7 @@ export default class BattleScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     setTimeout(() => {
-      this.returnToWorld();
+      this.returnToWorld({ win: false, escaped: true });
     }, 2500);
   }
   endBattle(win: boolean) {
@@ -204,11 +206,11 @@ export default class BattleScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
     setTimeout(() => {
-      this.returnToWorld();
+      this.returnToWorld({ win, escaped: false });
     }, 2500);
   }
-  returnToWorld() {
+  returnToWorld(args: TCallbackProps) {
     this.scene.stop();
-    this.battleProps?.callback();
+    this.battleProps?.callback(args);
   }
 }

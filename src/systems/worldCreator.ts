@@ -176,7 +176,7 @@ function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
         if (triggered) {
           return;
         }
-        triggered = true;
+      //  triggered = true;
         console.log("triggered");
         api.openBattle(mobs);
       }
