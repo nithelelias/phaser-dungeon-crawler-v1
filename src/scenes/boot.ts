@@ -2,7 +2,7 @@ import { TILES } from "../data/resources";
 import preloaderProgressBar from "../ui/preloader-progress-bar";
 const GLOBAL = window as any;
 export default class Boot extends Phaser.Scene {
-  static onEnd = () => `Override This to start your main scene`;
+  static onEnd = () => {`Override This to start your main scene`};
   constructor() {
     super({ key: "boot" });
   }

@@ -1,6 +1,7 @@
 import createPlayer, { Player } from "../components/player";
 
 import ROOMS from "../context/rooms";
+import { HALF_TILESIZE } from "../data/constants";
 import EventSystem from "../systems/eventSystem";
 import RenderMapSystem from "../systems/renderMapSystem";
 import createWorldRooms from "../systems/worldCreator";
@@ -24,11 +25,19 @@ export default class GameScene extends Phaser.Scene {
   }
   create() {
     this.showMapTools();
-    RenderMapSystem.create(this);
+
+    RenderMapSystem.create(this).layers.forEach((layer) =>
+      layer.setPipeline("Light2D")
+    );
     EventSystem.create(this);
     this.player = createPlayer(this);
     this.cameras.main.setZoom(5).startFollow(this.player.sprite);
 
+    this.lights
+      .addLight(this.player.sprite.x, this.player.sprite.y, 60)
+      .setIntensity(1.2);
+
+    this.lights.enable().setAmbientColor(0x111111);
     this.loadRoom("floor1");
     this.events.on("shutdown", () => {
       console.log("shutted down");
@@ -38,6 +47,7 @@ export default class GameScene extends Phaser.Scene {
   loadRoom(roomId: string, entryPosition?: TCell) {
     const roomData = ROOMS.setCurrent(roomId)!;
     const player = this.player!;
+
     //player.sprite.setDepth(1);
     player.setPosition(entryPosition || roomData.entrance);
     this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
@@ -50,7 +60,8 @@ export default class GameScene extends Phaser.Scene {
         const event = roomData.triggers[position.row][position.col];
         if (event) {
           const coords = getCoordsOfCell(position.col, position.row);
-          console.log("event trigger", event.tag,coords);
+          // this.lights.lights[0].setPosition(coords.x, coords.y);
+          console.log("event trigger", event.tag, coords);
           event.execute(this, coords).then(() => {});
         }
       } catch (error) {
@@ -58,7 +69,14 @@ export default class GameScene extends Phaser.Scene {
       }
     });
   }
-
+  updateLightOnPlayer() {
+    if (!this.player) {
+      return;
+    }
+    const light = this.lights.lights[0];
+    light.x = this.player.sprite.x + HALF_TILESIZE;
+    light.y = this.player.sprite.y + HALF_TILESIZE;
+  }
   openBattle(mobs: TDataEntity[]) {
     this.cameras.main.postFX.addBlur(12);
     this.scene.pause("game");
@@ -80,5 +98,8 @@ export default class GameScene extends Phaser.Scene {
     this.input.keyboard?.on("keydown-M", () => {
       this.scene.run("maptool");
     });
+  }
+  update(time: number, delta: number): void {
+    this.updateLightOnPlayer();
   }
 }

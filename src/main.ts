@@ -17,6 +17,7 @@ const game = new Phaser.Game({
     mode: Phaser.Scale.FIT,
   },
   scene: [Boot,IntroScene, GameScene, BattleScene, EndGame, MapToolScene],
+  
 });
 Boot.onEnd = () => {
   game.scene.start("intro");

@@ -1,4 +1,5 @@
 export const TILESIZE = 16;
+export const HALF_TILESIZE = 8;
 
 export const MAP_MAX_SIZE = {
   width: 20,
