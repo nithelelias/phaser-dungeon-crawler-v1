@@ -27,9 +27,10 @@ export default function initController(
   };
   const onKeyDown = (event: KeyboardEvent) => {
     pressed = true;
-
     last.event = event;
-
+    scene.events.once("pause", () => {
+      pressed = false;
+    });
     scene.input.keyboard?.once("keyup", () => {
       pressed = false;
     });

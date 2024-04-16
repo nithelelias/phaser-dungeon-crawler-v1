@@ -43,12 +43,23 @@ export type TEntity = {
   position: TCell;
   sprite: Phaser.GameObjects.GameObject;
 };
-
-export type TDataEntity = {
-  name: string;
-  texture: number;
-  level: number; 
+export type TEntityStats = {
   hp: number;
   speed: number;
   attack: number;
+  defense: number;
+  evasion: number;
 };
+export type TDataEntity = {
+  name: string;
+  texture: number;
+  level: number;
+  stats: TEntityStats;
+};
+
+export enum STATUSEFFECTS {
+  POISON = "POISON",
+  BLEED = "BLEED",
+  STUN = "STUN",
+  BURN = "BURN",
+}

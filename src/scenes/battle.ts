@@ -1,71 +1,12 @@
 import BEntity from "../components/battleEntity";
+import createBattleTurn from "../components/battleTurn";
 import player from "../context/player";
 import { BATTLE_MOBS_ZONES, COLORS, FONTS } from "../data/constants";
 import { TILES } from "../data/resources";
 import TurnManager, { ITurnAction } from "../systems/turnSystem";
 import { TDataEntity } from "../types/types";
 import EscapeButton from "../ui/escapeButton";
-import { tweenPromise } from "../utils/tweenPromise";
 
-function createBattleTurn(entity: BEntity) {
-  const spawnPosition = { x: entity.x + 0, y: entity.y + 0 };
-  const putNextToTarget = async (target: BEntity) => {
-    const dirx = target.x > entity.x ? -1 : 1;
-    const y = target.y;
-    const x = target.x + 30 * dirx;
-    await tweenPromise(entity, { x, y, duration: 200, ease: "quint.in" });
-  };
-  const attack = async (target: BEntity) => {
-    await attackAnimation(target);
-    const damage = entity.info.attack;
-    target.hit(damage);
-  };
-  const attackAnimation = async (target: BEntity) => {
-    const dirx = target.x > entity.x ? -1 : 1;
-    tweenPromise(entity, {
-      x: target.x + 10 * dirx,
-      y: target.y,
-      duration: 200,
-      ease: "back.in",
-      yoyo: true,
-      hold: 100,
-    });
-    await tweenPromise(target, {
-      x: target.x - 10 * dirx,
-      delay: 100,
-      duration: 60,
-      ease: "back.inOut",
-      repeat: 3,
-      yoyo: true,
-    });
-  };
-  const returnToSpawn = async () => {
-    await tweenPromise(entity, {
-      x: spawnPosition.x,
-      y: spawnPosition.y,
-      duration: 200,
-      ease: "quint.in",
-    });
-  };
-  return async () => {
-    const aliveTargets = entity.targets.filter((target) => {
-      return target.lifeValue > 0;
-    });
-    if (aliveTargets.length === 0) {
-      return null;
-    }
-
-    const target = aliveTargets.sort((targetA, targetB) => {
-      return targetA.lifeValue - targetB.lifeValue;
-    })[0];
-
-    // put next to target
-    await putNextToTarget(target);
-    await attack(target);
-
-    await returnToSpawn();
-  };
-}
 type TCallbackProps = {
   escaped: boolean;
   win: boolean;
@@ -104,7 +45,7 @@ export default class BattleScene extends Phaser.Scene {
     this.createEntities().forEach((entity: BEntity) => {
       const turnInfo = {
         name: entity.info.name,
-        speed: entity.info.speed + 0,
+        speed: entity.info.stats.speed + 0,
         readyValue: 0,
         action: createBattleTurn(entity),
       };
@@ -150,10 +91,15 @@ export default class BattleScene extends Phaser.Scene {
 
     const playerData: TDataEntity = {
       name: "Player",
+      level: player.getLevel(),
       texture: TILES.frames.charactes.default,
-      ...player.getStats(),
+      stats: player.getStats(),
     };
     const playerEntity = new BEntity(this, -100, 0, playerData);
+
+    playerEntity.skills.push(["block", 90]);
+    playerEntity.skills.push(["regen", 0.1]);
+
     playerEntity.isEnemy = false;
     const zones = BATTLE_MOBS_ZONES[Math.min(5, mobs.length)];
     const entityList = [playerEntity];

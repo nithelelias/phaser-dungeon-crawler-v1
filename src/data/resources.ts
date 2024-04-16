@@ -11,9 +11,22 @@ export const TILES = {
     chest: 156,
     chest_open: 157,
     enemy: 525,
+    spacebar:518,
+    effects:{
+      heal:498,
+      bleed:497,
+      stun:496,
+      poison:495,
+      burn:494,
+      block:364
+    },
+    projectile: {
+      default: 311,
+      energy: 332,
+    },
     charactes: {
       default: 399,
-      rat:437
+      rat: 437,
     },
   },
 };

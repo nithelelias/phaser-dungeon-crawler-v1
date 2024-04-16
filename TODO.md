@@ -1,12 +1,12 @@
 
-# h1-> MAPA
+# h1-> MAPA	✅
 - necesito un maptile que genere un laberinto aleatorio ✅
 - necesito un player que se pueda desplazar por el laberinto teniendo en cuenta los choques.✅
 - necesito marcado un camino hacia la salida ✅
 - necesito que pueda cambiar de  pisos al llegar al final y regresar al anterior al ponerse al principio✅
 - necesito un player que se pueda desplazar en el piso y tenga eventos en cada toque, los eventos por ahora solo deben mandar un mensaje en pantalla.✅
 
-# h2-> BATALLA
+# h2-> BATALLA	✅
 - necesito que se pueda ubicar un enemigo en pantalla ✅
 - necesito que el player al tocar un enemigo en el mapa abra una escena de batallas ✅
 - necesito una escena de batalla entre el player y entidades enemigas que funcione automaticamente (sin  intervencion del player) = auto-battler ✅
@@ -14,27 +14,32 @@
 - la batalla se pueda pausar , aumentar velocidad o normalizar velocidad. ❎❌
 - el player debe poder escapar de la batalla y regresar al mapa✅
 
-# h3 -> VIDA
+# h3 -> VIDA	✅
 - los mobs y el player tendran una propiedad vida que sera visible en un lifebar ✅
 - la batalla debe terminar si todos los mobs tiene la vida = 0 y el player regresara al mapa.✅
 - al morir el jugador debe saltar una escena de muerte y se debe volver a comenzar el juego. ✅
 
 
-# h4 -> ATRIBUTOS de Batalla
+# h4 -> ATRIBUTOS de Batalla	✅
 - cada entidad debe tener los atributos y habilidades que modifiquen el comportamiento de la batalla
-- atributos: 
-	 maxhp, ataque, defense, velocidad, evasion.
-- habilidades: 
-	vampirismo: roba un porcentaje de vida siempre del daño ,
-	envenenar: probabilidad de dar estado envenenar
-        stunear: probablidad de dar estado paralisis
-	sangrar: probabiliadd de dar estado sangrado
-	quemar: probabilidad de dar estado quemar.
-        contratacar: probabilidad de regresar un golpe
-        ataque adicional: probabilidad de repetir el ataque
-	proyectil: lanza un proyectil hacia un enemigo aleatorio.
-	bloqueo: probabilidad de bloquear un ataque.
-	regeneration: recupera un porcentaje de vida.
+-atributos:  ✅
+	 hp, ataque, defense, velocidad, evasion.
+-habilidades:  ✅
+	vampirismo: roba un porcentaje de vida siempre del daño.	✔
+	envenenar: dar estado envenenar				 				✔
+	sangrar:  da estado sangrado								✔
+	quemar:  dar estado quemar.									✔
+    stunear: probablidad de dar estado paralisis				✔
+	proyectil: lanza un proyectil hacia un enemigo aleatorio.	✔
+	ataque adicional: probabilidad de repetir el ataque			✔
+    contratacar: probabilidad de regresar un golpe  			✔  			
+	bloqueo: probabilidad de bloquear un ataque.				✔
+	regeneration: recupera un porcentaje de vida.				✔
+-estados los estados se ejecutaran por turno y desapareceran n turnos:✅
+	- envenenado: pierde 1vida									✔
+	- sangrado: pierde 1 vida									✔
+	- quemado:  pierde 1 vida									✔
+	- paralizado: pierde 1 turno								✔
 
 # h5 -> ARMAS y ARMADURAS
 - el jugador podra equipar armas y armaduras las cuales alteraran sus atributos de batalla

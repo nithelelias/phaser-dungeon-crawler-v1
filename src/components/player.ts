@@ -27,7 +27,7 @@ export class Player {
 function controlMovePlayer(player: Player) {
   let actionLock = false;
 
-  initController(
+  return initController(
     player.scene,
     (keydown: TKeyControlMap) => {
       if (actionLock) return;
@@ -61,6 +61,7 @@ function controlMovePlayer(player: Player) {
 
 export default function createPlayer(scene: Phaser.Scene) {
   const player = new Player(scene);
-  controlMovePlayer(player);
+  const unbindController=controlMovePlayer(player);
+  scene.events.once("shutdown", unbindController);
   return player;
 }

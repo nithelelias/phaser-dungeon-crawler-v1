@@ -155,10 +155,14 @@ function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
   const MOBTEMPLATE = {
     name: "rat",
     texture: TILES.frames.charactes.rat,
-    hp: 2,
-    attack: 1,
-    speed: 1,
     level: 1,
+    stats: {
+      hp: 2,
+      attack: 1,
+      speed: 1,
+      defense: 1,
+      evasion: 1,
+    },
   };
   const addEnemyAt = (cell: TCell) => {
     dng.data[1][cell.row][cell.col] = TILES.frames.enemy;
@@ -176,7 +180,7 @@ function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
         if (triggered) {
           return;
         }
-      //  triggered = true;
+        //  triggered = true;
         console.log("triggered");
         api.openBattle(mobs);
       }
