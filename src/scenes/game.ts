@@ -5,7 +5,7 @@ import EventSystem from "../systems/eventSystem";
 import RenderMapSystem from "../systems/renderMapSystem";
 import createWorldRooms from "../systems/worldCreator";
 import { TCell, TDataEntity } from "../types/types";
-import LifeBar from "../ui/lifeBar";
+import { getCoordsOfCell } from "../utils/functions";
 
 export default class GameScene extends Phaser.Scene {
   player: Player | null = null;
@@ -49,8 +49,9 @@ export default class GameScene extends Phaser.Scene {
       try {
         const event = roomData.triggers[position.row][position.col];
         if (event) {
-          console.log("event trigger", event.tag);
-          event.execute().then(() => {});
+          const coords = getCoordsOfCell(position.col, position.row);
+          console.log("event trigger", event.tag,coords);
+          event.execute(this, coords).then(() => {});
         }
       } catch (error) {
         console.warn(position, error);

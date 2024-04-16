@@ -1,7 +1,7 @@
-import { TEntityStats } from "../types/types";
+import { EQUIPEMENT, STATS, TEntityStats, TStatDic } from "../types/types";
+import { getEquipment } from "./inventory";
 
 const store = {
-  level: 1,
   stats: {
     hp: 3,
     speed: 1,
@@ -21,10 +21,39 @@ function setCurrentLife(hp: number) {
   store.currentHp = clamp(hp, 0, store.stats.hp);
   return getCurrentLife();
 }
-function getStats(): TEntityStats {
+function getBaseStats(): TEntityStats {
   return { ...store.stats };
 }
-function getLevel() {
-  return store.level + 0;
+function getCalcStats(): TEntityStats {
+  const stats = { ...store.stats };
+  const equiment = getEquipment();
+
+  const iterateEquipement = () => {
+    const keys = Object.keys(equiment);
+    for (const key of keys) {
+      const item = equiment[key as EQUIPEMENT];
+      if (item) {
+        iterateAndCalcStats(item.stats);
+      }
+    }
+  };
+  const iterateAndCalcStats = (alterStats: TStatDic) => {
+    const keys = Object.keys(alterStats);
+    for (const key of keys) {
+      const statValue = alterStats[key as STATS];
+      if (statValue) {
+        stats[key as STATS] += statValue;
+      }
+    }
+  };
+
+  iterateEquipement();
+  return stats;
 }
-export default { getStats, getLevel, getCurrentLife, setCurrentLife };
+
+export default {
+  getBaseStats,
+  getCalcStats,
+  getCurrentLife,
+  setCurrentLife,
+};

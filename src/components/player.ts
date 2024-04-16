@@ -27,41 +27,47 @@ export class Player {
 function controlMovePlayer(player: Player) {
   let actionLock = false;
 
-  return initController(
-    player.scene,
-    (keydown: TKeyControlMap) => {
-      if (actionLock) return;
-
-      const desirePosition = { ...player.position };
-
-      if (keydown.left) {
-        desirePosition.col -= 1;
-      }
-      if (keydown.right) {
-        desirePosition.col += 1;
-      }
-      if (keydown.up) {
-        desirePosition.row -= 1;
-      }
-      if (keydown.down) {
-        desirePosition.row += 1;
-      }
-      if (!isWalkAble(desirePosition.col, desirePosition.row)) {
-        return;
-      }
-      actionLock = true;
-      moveToCell(player, desirePosition).then(() => {
-        actionLock = false;
-        player.setPosition(desirePosition);
-        EventSystem.current.playerMoved(desirePosition);
-      });
+  return initController(player.scene, (keydown: TKeyControlMap) => {
+    if (actionLock) return;
+    const moved = keydown.left || keydown.right || keydown.up || keydown.down;
+    if (!moved) {
+      return;
     }
-  );
+    const desirePosition = { ...player.position };
+
+    if (keydown.left) {
+      desirePosition.col -= 1;
+    }
+    if (keydown.right) {
+      desirePosition.col += 1;
+    }
+    if (keydown.up) {
+      desirePosition.row -= 1;
+    }
+    if (keydown.down) {
+      desirePosition.row += 1;
+    }
+    if (
+      desirePosition.col === player.position.col &&
+      desirePosition.row === player.position.row
+    ) {
+      return;
+    }
+    if (!isWalkAble(desirePosition.col, desirePosition.row)) {
+      return;
+    }
+    actionLock = true;
+    moveToCell(player, desirePosition).then(() => {
+      actionLock = false;
+      player.setPosition(desirePosition);
+      EventSystem.current.playerMoved(desirePosition);
+    });
+  });
 }
 
 export default function createPlayer(scene: Phaser.Scene) {
   const player = new Player(scene);
-  const unbindController=controlMovePlayer(player);
+  const unbindController = controlMovePlayer(player);
   scene.events.once("shutdown", unbindController);
   return player;
 }

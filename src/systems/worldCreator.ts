@@ -1,8 +1,20 @@
+import { setEquipment } from "../context/inventory";
 import ROOMS from "../context/rooms";
+import { TILESIZE } from "../data/constants";
 import { MAPS, TILES } from "../data/resources";
-import { TCell, TCellEventType, TDataEntity, TMapData } from "../types/types";
+import {
+  EQUIPEMENT,
+  STATS,
+  TCell,
+  TCellEventType,
+  TCoords,
+  TDataEntity,
+  TEquipment,
+  TMapData,
+} from "../types/types";
 import iterateCount from "../utils/iterateCount";
 import random from "../utils/random";
+import { tweenPromise } from "../utils/tweenPromise";
 import generateDungeonRoom from "./generateDungeonRoom";
 
 interface IWorldCreator {
@@ -73,7 +85,7 @@ function addTriggerEvent(
   cell: TCell,
   type: TCellEventType,
   tag: string[],
-  execute: () => Promise<void>
+  execute: (scene: Phaser.Scene, coords: TCoords) => Promise<void>
 ) {
   dng.triggers[cell.row][cell.col] = {
     col: cell.col,
@@ -124,19 +136,31 @@ function addChestOnRoom(dng: TMapData) {
     dng.data[0][cell.row][cell.col] = tiles.ground[0];
     dng.data[1][cell.row][cell.col] = TILES.frames.chest;
     dng.walls[cell.row][cell.col] = 0;
+
+    const item: TEquipment = {
+      name: "sword",
+      type: EQUIPEMENT.WEAPON,
+      texture: TILES.frames.items.sword,
+      stats: {
+        [STATS.attack]: 10,
+      },
+    };
+
     addTriggerEvent(
       dng,
       cell,
       TCellEventType.WALK,
       [`chest-${dng.roomId}`],
-      async () => {
+      async (scene: Phaser.Scene, coords: TCoords) => {
         if (open) {
           return;
         }
         open = true;
-        console.log("open chest");
+        console.log("open chest ", item);
         dng.data[1][cell.row][cell.col] = TILES.frames.chest_open;
         dng.dirty = true;
+        popIconUp(scene, coords, item.texture);
+        setEquipment(item.type, item);
       }
     );
   };
@@ -155,7 +179,6 @@ function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
   const MOBTEMPLATE = {
     name: "rat",
     texture: TILES.frames.charactes.rat,
-    level: 1,
     stats: {
       hp: 2,
       attack: 1,
@@ -191,4 +214,39 @@ function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
     const cell: TCell = cellsToUse.splice(idx, 1)[0];
     addEnemyAt(cell);
   });
+}
+
+async function popIconUp(
+  scene: Phaser.Scene,
+  coords: { x: number; y: number },
+  iconTexture: number
+) {
+  const halfTiLe = TILESIZE / 2;
+  const container = scene.add
+    .container(coords.x + halfTiLe, coords.y + halfTiLe, [
+      scene.add.sprite(
+        0,
+        0,
+        TILES.name,
+        iconTexture
+      ),
+    ])
+    .setScale(0.2)
+    .setAlpha(0);
+  await tweenPromise(container, {
+    y: coords.y - halfTiLe,
+    scale: 1,
+    alpha: 1,
+    duration: 100,
+    ease: "sine.out",
+    hold: 500,
+  });
+  await tweenPromise(container, {
+    y: coords.y - TILESIZE * 2,
+    scale: 1,
+    alpha: 0,
+    duration: 200,
+    ease: "sine.out",
+  });
+  container.destroy();
 }

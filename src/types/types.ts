@@ -1,3 +1,4 @@
+export type TCoords = { x: number; y: number };
 export type TMatrixMap = number[][];
 export type TMapTiles = {
   ground: number[];
@@ -37,12 +38,19 @@ export type TCellEvent = {
   row: number;
   type: TCellEventType;
   tag: string[];
-  execute: () => Promise<void>;
+  execute: (scene: Phaser.Scene, coords: TCoords) => Promise<void>;
 };
 export type TEntity = {
   position: TCell;
   sprite: Phaser.GameObjects.GameObject;
 };
+export enum STATS {
+  hp = "hp",
+  speed = "speed",
+  attack = "attack",
+  defense = "defense",
+  evasion = "evasion",
+}
 export type TEntityStats = {
   hp: number;
   speed: number;
@@ -53,7 +61,6 @@ export type TEntityStats = {
 export type TDataEntity = {
   name: string;
   texture: number;
-  level: number;
   stats: TEntityStats;
 };
 
@@ -63,3 +70,18 @@ export enum STATUSEFFECTS {
   STUN = "STUN",
   BURN = "BURN",
 }
+export enum EQUIPEMENT {
+  WEAPON = "WEAPON",
+  SHIELD = "SHIELD",
+  ARMOR = "ARMOR",
+  RING = "RING",
+  AMULET = "AMULET",
+  HELMET = "HELMET",
+}
+export type TStatDic={ [K in STATS]?: number }
+export type TEquipment = {
+  name: string;
+  texture: number;
+  type: EQUIPEMENT;
+  stats: TStatDic;
+};

@@ -11,14 +11,18 @@ export const TILES = {
     chest: 156,
     chest_open: 157,
     enemy: 525,
-    spacebar:518,
-    effects:{
-      heal:498,
-      bleed:497,
-      stun:496,
-      poison:495,
-      burn:494,
-      block:364
+    spacebar: 518,
+    items: {
+      sword: 247,
+      sword2: 248,
+    },
+    effects: {
+      heal: 498,
+      bleed: 497,
+      stun: 496,
+      poison: 495,
+      burn: 494,
+      block: 364,
     },
     projectile: {
       default: 311,

@@ -41,7 +41,8 @@
 	- quemado:  pierde 1 vida									✔
 	- paralizado: pierde 1 turno								✔
 
-# h5 -> ARMAS y ARMADURAS
+# h5 -> ARMAS y ARMADURAS ✅
+- el jugador tendra un inventario y equipo
 - el jugador podra equipar armas y armaduras las cuales alteraran sus atributos de batalla
 -> weapons:
 	- espada: +ataque +defensa +skill-bleed | +skill-vampirism | +skill-counter
@@ -60,7 +61,7 @@
 -se requiere una interfaz que logre ver los atributos la vida y las habilidades.
 - la interfaz debe mostrar el piso donde se encuentra
 
-# h7 -> batalla con habilidades y attributos
+# h7 -> batalla con habilidades y attributos ✅
 - El calculo de daño debe depender ahora de los atributos de las entidades player y mobs
 - la batalla sera de velocidad x fases en donde cada actor con el atributo velocidad se le calculara la rapidez de actuar
  -> fases:

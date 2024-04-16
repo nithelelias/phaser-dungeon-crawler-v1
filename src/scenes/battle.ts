@@ -91,10 +91,11 @@ export default class BattleScene extends Phaser.Scene {
 
     const playerData: TDataEntity = {
       name: "Player",
-      level: player.getLevel(),
       texture: TILES.frames.charactes.default,
-      stats: player.getStats(),
+      stats: player.getCalcStats(),
     };
+    console.log("BASE STATS", player.getBaseStats());
+    console.log("CALC STATS", playerData.stats);
     const playerEntity = new BEntity(this, -100, 0, playerData);
 
     playerEntity.skills.push(["block", 90]);

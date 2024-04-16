@@ -1,6 +1,5 @@
 import { TILES } from "../data/resources";
 import { STATUSEFFECTS } from "../types/types";
-import waitTime from "../ui/waitTime";
 import iterateCount from "../utils/iterateCount";
 import random from "../utils/random";
 import { tweenPromise } from "../utils/tweenPromise";
@@ -29,7 +28,7 @@ export enum ACTION_SKILLS {
   repeat = "repeat",
   block = "block",
   regen = "regen",
-  counter="counter"
+  counter = "counter",
 }
 export const OFFENSIVE_SKILLS: Record<
   string,

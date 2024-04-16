@@ -1,7 +1,7 @@
 import { MAPS, TILES } from "../data/resources";
 import generateMaze from "../libs/MazeBuilder";
 import PathFind from "../libs/pathFind";
-import { TCell, TMapData } from "../types/types";
+import { TCell, TCoords, TMapData } from "../types/types";
 import random from "../utils/random";
 
 function iterateMatrixDataMap(
@@ -101,7 +101,7 @@ export default function generateDungeonRoom(
     }
   });
 
-  path.forEach((p: { x: number; y: number }) => {
+  path.forEach((p: TCoords) => {
     data[0][p.y][p.x] = TILES.frames.__WHITE;
   });
 
