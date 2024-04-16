@@ -1,15 +1,15 @@
-import { setEquipment } from "../context/inventory";
+import { addToInventory } from "../context/inventory";
 import ROOMS from "../context/rooms";
 import { TILESIZE } from "../data/constants";
+import { getRandomGear } from "../data/items";
+
 import { MAPS, TILES } from "../data/resources";
 import {
-  EQUIPEMENT,
-  STATS,
+  ITEM,
   TCell,
   TCellEventType,
   TCoords,
   TDataEntity,
-  TEquipment,
   TMapData,
 } from "../types/types";
 import iterateCount from "../utils/iterateCount";
@@ -137,14 +137,7 @@ function addChestOnRoom(dng: TMapData) {
     dng.data[1][cell.row][cell.col] = TILES.frames.chest;
     dng.walls[cell.row][cell.col] = 0;
 
-    const item: TEquipment = {
-      name: "sword",
-      type: EQUIPEMENT.WEAPON,
-      texture: TILES.frames.items.sword,
-      stats: {
-        [STATS.attack]: 10,
-      },
-    };
+    const item = getRandomGear();
 
     addTriggerEvent(
       dng,
@@ -156,11 +149,15 @@ function addChestOnRoom(dng: TMapData) {
           return;
         }
         open = true;
-        console.log("open chest ", item);
         dng.data[1][cell.row][cell.col] = TILES.frames.chest_open;
         dng.dirty = true;
+        addToInventory({
+          type: ITEM.EQUIPEMENT,
+          item,
+        });
+
         popIconUp(scene, coords, item.texture);
-        setEquipment(item.type, item);
+        console.log("open chest ", item.name, item);
       }
     );
   };
@@ -184,7 +181,7 @@ function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
       attack: 1,
       speed: 1,
       defense: 1,
-      evasion: 1,
+      evation: 1,
     },
   };
   const addEnemyAt = (cell: TCell) => {
@@ -224,12 +221,7 @@ async function popIconUp(
   const halfTiLe = TILESIZE / 2;
   const container = scene.add
     .container(coords.x + halfTiLe, coords.y + halfTiLe, [
-      scene.add.sprite(
-        0,
-        0,
-        TILES.name,
-        iconTexture
-      ),
+      scene.add.sprite(0, 0, TILES.name, iconTexture),
     ])
     .setScale(0.2)
     .setAlpha(0);

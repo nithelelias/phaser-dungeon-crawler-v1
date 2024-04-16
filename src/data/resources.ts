@@ -12,9 +12,25 @@ export const TILES = {
     chest_open: 157,
     enemy: 525,
     spacebar: 518,
-    items: {
+    gear: {
       sword: 247,
-      sword2: 248,
+      sword10: 256,
+      hammer: 266,
+      hammer10: 275,
+      bow: 285,
+      bow10: 294,
+      staff: 304,
+      staff3: 306,
+      spear: 307,
+      spear3: 309,
+      shield: 361,
+      shield10: 370,
+      armor: 342,
+      armor10: 351,
+      helmet: 380,
+      helmet10: 389,
+      ring:174,
+      amulet:175
     },
     effects: {
       heal: 498,

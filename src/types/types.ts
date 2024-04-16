@@ -49,14 +49,14 @@ export enum STATS {
   speed = "speed",
   attack = "attack",
   defense = "defense",
-  evasion = "evasion",
+  evation = "evation",
 }
 export type TEntityStats = {
   hp: number;
   speed: number;
   attack: number;
   defense: number;
-  evasion: number;
+  evation: number;
 };
 export type TDataEntity = {
   name: string;
@@ -78,10 +78,43 @@ export enum EQUIPEMENT {
   AMULET = "AMULET",
   HELMET = "HELMET",
 }
-export type TStatDic={ [K in STATS]?: number }
+export type TStatDic = { [K in STATS]?: number };
 export type TEquipment = {
   name: string;
   texture: number;
+  quality: number;
   type: EQUIPEMENT;
   stats: TStatDic;
+};
+
+export enum WEAPON {
+  SWORD = "SWORD",
+  HAMMER = "HAMMER",
+  BOW = "BOW",
+  STAFF = "STAFF",
+  SPEAR = "SPEAR",
+}
+
+export enum SKILLS {
+  repeat = "repeat",
+  block = "block",
+  regen = "regen",
+  counter = "counter",
+  vampirism = "vampirism",
+  poison = "poison",
+  bleed = "bleed",
+  stun = "stun",
+  burn = "burn",
+  projectile = "projectile",
+}
+
+export enum ITEM {
+  EQUIPEMENT = "EQUIPEMENT",
+  CONSUMABLE = "CONSUMABLE",
+}
+
+export type TConsumable = {
+  name: string;
+  value: number;
+  texture: number;
 };

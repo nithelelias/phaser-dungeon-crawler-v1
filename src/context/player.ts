@@ -7,7 +7,7 @@ const store = {
     speed: 1,
     attack: 1,
     defense: 1,
-    evasion: 0,
+    evation: 0,
   },
   currentHp: 3,
 };

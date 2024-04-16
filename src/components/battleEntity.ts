@@ -31,8 +31,8 @@ export default class BEntity extends Phaser.GameObjects.Container {
     this.sprite = scene.add.sprite(0, 0, TILES.name, info.texture);
     this.add([this.sprite, this.lifeBar]);
     this.evationRate = MemoryWeightRandom([
-      [true, info.stats.evasion],
-      [false, 100 - info.stats.evasion],
+      [true, info.stats.evation],
+      [false, 100 - info.stats.evation],
     ]);
   }
   setTarget(targets: BEntity[]) {

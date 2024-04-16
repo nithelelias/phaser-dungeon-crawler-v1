@@ -23,7 +23,7 @@
 # h4 -> ATRIBUTOS de Batalla	✅
 - cada entidad debe tener los atributos y habilidades que modifiquen el comportamiento de la batalla
 -atributos:  ✅
-	 hp, ataque, defense, velocidad, evasion.
+	 hp, ataque, defense, velocidad, evation.
 -habilidades:  ✅
 	vampirismo: roba un porcentaje de vida siempre del daño.	✔
 	envenenar: dar estado envenenar				 				✔
@@ -48,14 +48,14 @@
 	- espada: +ataque +defensa +skill-bleed | +skill-vampirism | +skill-counter
 	- martillo: +ataque +maxhp +skill-stun
 	- arco:+ataque +speed +skill-bleed | +skill-poison
-	- staff: +evasion +skill-burn | +skill-proyectil | +skill-regeneration
-	- spear: +evasion +skill-bleed | +skill-vampirism | +skill-attack-plus
+	- staff: +evation +skill-burn | +skill-proyectil | +skill-regeneration
+	- spear: +evation +skill-bleed | +skill-vampirism | +skill-attack-plus
 -> armors:
 	- chest: +defense +hp 
 	- shield: ++defense
 	- helmet: +defense +evation
- 	- ring:  maxhp, velocidad, evasion.
-	- necklace: maxhp, velocidad, evasion.
+ 	- ring:  maxhp, velocidad, evation.
+	- necklace: maxhp, velocidad, evation.
 
 # h6 -> interfaz
 -se requiere una interfaz que logre ver los atributos la vida y las habilidades.
