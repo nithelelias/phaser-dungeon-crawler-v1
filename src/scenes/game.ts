@@ -39,20 +39,11 @@ export default class GameScene extends Phaser.Scene {
 
     this.lights.enable().setAmbientColor(0x111111);
     this.loadRoom("floor1");
-    this.events.on("shutdown", () => {
-      console.log("shutted down");
-      // this.events.removeAllListeners()
-    });
-  }
-  loadRoom(roomId: string, entryPosition?: TCell) {
-    const roomData = ROOMS.setCurrent(roomId)!;
-    const player = this.player!;
 
-    //player.sprite.setDepth(1);
-    player.setPosition(entryPosition || roomData.entrance);
-    this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
-    roomData.dirty = true;
     EventSystem.current.onPlayerMoved(() => {
+      const roomData = ROOMS.getCurrent();
+      if (!roomData) return;
+      const player = this.player!;
       //dungeonRoom.stop();
       const position = player.position;
 
@@ -60,14 +51,20 @@ export default class GameScene extends Phaser.Scene {
         const event = roomData.triggers[position.row][position.col];
         if (event) {
           const coords = getCoordsOfCell(position.col, position.row);
-          // this.lights.lights[0].setPosition(coords.x, coords.y);
-          console.log("event trigger", event.tag, coords);
+          console.log("event trigger IN", roomData.roomId, event.tag, position);
           event.execute(this, coords).then(() => {});
         }
       } catch (error) {
         console.warn(position, error);
       }
     });
+  }
+  loadRoom(roomId: string, entryPosition?: TCell) {
+    const roomData = ROOMS.setCurrent(roomId)!;
+    const player = this.player!;
+    player.setPosition(entryPosition || roomData.entrance);
+    this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
+    roomData.dirty = true;
   }
   updateLightOnPlayer() {
     if (!this.player) {
@@ -99,7 +96,7 @@ export default class GameScene extends Phaser.Scene {
       this.scene.run("maptool");
     });
   }
-  update(time: number, delta: number): void {
+  update(): void {
     this.updateLightOnPlayer();
   }
 }

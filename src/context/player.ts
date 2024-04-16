@@ -1,6 +1,7 @@
 import { EQUIPEMENT, STATS, TEntityStats, TStatDic } from "../types/types";
 import { getEquipment } from "./inventory";
 
+const skillSet: [string, number][] = [["regen", 1]];
 const store = {
   stats: {
     hp: 3,
@@ -9,6 +10,7 @@ const store = {
     defense: 1,
     evation: 0,
   },
+  skillSet,
   currentHp: 3,
 };
 function clamp(v: number, min: number, max: number) {
@@ -50,10 +52,13 @@ function getCalcStats(): TEntityStats {
   iterateEquipement();
   return stats;
 }
-
+function getSkillSet(): [string, number][] {
+  return [...store.skillSet];
+}
 export default {
   getBaseStats,
   getCalcStats,
+  getSkillSet,
   getCurrentLife,
   setCurrentLife,
 };

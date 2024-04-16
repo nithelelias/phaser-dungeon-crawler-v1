@@ -94,12 +94,13 @@ export default class BattleScene extends Phaser.Scene {
       texture: TILES.frames.charactes.default,
       stats: player.getCalcStats(),
     };
-    console.log("BASE STATS", player.getBaseStats());
-    console.log("CALC STATS", playerData.stats);
+    /*     console.log("BASE STATS", player.getBaseStats());
+    console.log("CALC STATS", playerData.stats); */
     const playerEntity = new BEntity(this, -100, 0, playerData);
-
+    playerEntity.skills = player.getSkillSet();
+    /* 
     playerEntity.skills.push(["block", 90]);
-    playerEntity.skills.push(["regen", 0.1]);
+    playerEntity.skills.push(["regen", 1]); */
 
     playerEntity.isEnemy = false;
     const zones = BATTLE_MOBS_ZONES[Math.min(5, mobs.length)];

@@ -211,7 +211,7 @@ async function executeRegenIfHas(entity: BEntity) {
   const skills = entity.skills;
   const skill = skills.find((skill) => skill[0] === ACTION_SKILLS.regen);
   if (skill) {
-    const skillValue = skill[1];
+    const skillValue = skill[1] / 100;
     entity.recoverHp(skillValue);
     await popIconEffectAtBattleEntity(entity, EFFECT_SKILL_ICONS.regen);
   }
