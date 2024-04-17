@@ -1,9 +1,16 @@
-
 # h6 -> interfaz
 
 - se requiere una interfaz que logre ver los atributos la vida y las habilidades (HUB) en todo momento en pantalla.
-- la interfaz debe mostrar el piso donde se encuentra
-- la interfaz debe mostrar el equipamiento actual del personaje
+- EL HUB debe mostrar el piso donde se encuentra
+- EL HUB debe mostrar el equipamiento actual del personaje
+- EL HUB DEBE poder mostrar los atributos actuales del personaje
+- EL HUB debe poder mostrar el equipamiento del personaje
+
+### ==============================================================================================================================
+
+### ------------------- DONE ---------------------
+
+### ==============================================================================================================================
 
 # h7 -> batalla con habilidades y attributos ✅
 
@@ -30,15 +37,12 @@
   -action: el que reclamo el turno actua
   -end: el que reclamo el turno suelta el turno y la fase termina en idle.
 
-### ------------------- DONE ---------------------
-
 # h5 -> ARMAS y ARMADURAS ✅
 
 - el jugador tendra un inventario y equipo
 - el jugador podra equipar armas y armaduras las cuales alteraran sus atributos de batalla
   -> weapons: - espada: +ataque +defensa +skill-bleed | +skill-vampirism | +skill-counter - martillo: +ataque +maxhp +skill-stun - arco:+ataque +speed +skill-bleed | +skill-poison - staff: +evation +skill-burn | +skill-proyectil | +skill-regeneration - spear: +evation +skill-bleed | +skill-vampirism | +skill-attack-plus
   -> armors: - chest: +defense +hp - shield: ++defense - helmet: +defense +evation - ring: maxhp, velocidad, evation. - necklace: maxhp, velocidad, evation.
-
 
 # h4 -> ATRIBUTOS de Batalla ✅
 

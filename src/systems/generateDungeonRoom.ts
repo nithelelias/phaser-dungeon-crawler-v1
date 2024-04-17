@@ -31,6 +31,7 @@ export default function generateDungeonRoom(
   const data = [
     initArray(TILES.frames.__EMPTY),
     initArray(TILES.frames.__EMPTY),
+    initArray(TILES.frames.__DARK),
   ];
   const dataWalls = initArray();
   const triggers = initArray(null);
@@ -103,8 +104,7 @@ export default function generateDungeonRoom(
 
   path.forEach((p: TCoords) => {
     data[0][p.y][p.x] = TILES.frames.__WHITE;
-  });
-
+  }); 
   return {
     dirty: true,
     textureName,

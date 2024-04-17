@@ -26,9 +26,9 @@ export default class RenderMapSystem {
     this.layers = [
       map.createBlankLayer("layer0", tileset, 0, 0)!,
       map.createBlankLayer("layer1", tileset, 0, 0)!,
+      map.createBlankLayer("layer2", tileset, 0, 0)!,
     ];
     const unbindListener = () => {
-      
       scene.events.off("update", this.update, this);
     };
     scene.events.on("update", this.update, this);
@@ -60,11 +60,22 @@ export default class RenderMapSystem {
       iterateCount(MAP_MAX_SIZE.height, (row) => {
         if (isContained(room, col, row)) {
           room.data.forEach((matrix, idx) => {
-            this.layers[idx].putTileAt(matrix[row][col], col, row);
+            if (
+              this.layers[idx].getTileAt(col, row) === null ||
+              this.layers[idx].getTileAt(col, row).index !== matrix[row][col]
+            ) {
+              this.layers[idx].putTileAt(matrix[row][col], col, row);
+            }
           });
         } else {
-          this.layers[0].putTileAt(TILES.frames.__EMPTY, col, row);
-          this.layers[1].putTileAt(TILES.frames.__EMPTY, col, row);
+          if (
+            this.layers[0].getTileAt(col, row) === null ||
+            this.layers[0].getTileAt(col, row).index !== TILES.frames.__EMPTY
+          ) {
+            this.layers[0].putTileAt(TILES.frames.__EMPTY, col, row);
+            this.layers[1].putTileAt(TILES.frames.__EMPTY, col, row);
+            this.layers[2].putTileAt(TILES.frames.__EMPTY, col, row);
+          }
         }
       });
     });

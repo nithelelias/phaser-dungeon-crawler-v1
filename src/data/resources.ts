@@ -7,6 +7,8 @@ export const TILES = {
   frames: {
     blocked: 0,
     __WHITE: 29,
+    __DARK: 10,
+    __LIGHTED: 13,
     __EMPTY: 13,
     chest: 156,
     chest_open: 157,
@@ -29,8 +31,8 @@ export const TILES = {
       armor10: 351,
       helmet: 380,
       helmet10: 389,
-      ring:174,
-      amulet:175
+      ring: 174,
+      amulet: 175,
     },
     effects: {
       heal: 498,

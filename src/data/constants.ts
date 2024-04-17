@@ -9,15 +9,18 @@ export const FONTS = {
   font1: "arcade",
   font2: "oswald",
 };
-const color = (hexa: string, int: number) => {
-  return { hexa, int };
+const color = (code: string) => {
+  return { hexa: "#" + code, int: parseInt("0x" + code) };
 };
 export const COLORS = {
-  black: color("#000000", 0x000000),
-  white: color("#ffffff", 0xffffff),
-  red: color("#e74645", 0xe74645),
-  primary: color("#1ac0c6", 0x1ac0c6),
-  secundary: color("#fefcbf", 0xfacd60),
+  black: color("000000"),
+  white: color("ffffff"),
+  red: color("e74645"),
+  primary: color("fb8500"),
+  primary2: color("ffb703"),
+  secundary: color("8ecae6"),
+  secundary2: color("219ebc"),
+  dark: color("023047"),
 };
 export const BATTLE_MOBS_ZONES: Record<number, { x: number; y: number }[]> = {
   1: [
