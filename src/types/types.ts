@@ -42,7 +42,8 @@ export type TCellEvent = {
 };
 export type TEntity = {
   position: TCell;
-  sprite: Phaser.GameObjects.GameObject;
+  container: Phaser.GameObjects.Container;
+  sprite: Phaser.GameObjects.Sprite;
 };
 export enum STATS {
   hp = "hp",
@@ -78,7 +79,7 @@ export enum EQUIPEMENT {
   AMULET = "AMULET",
   HELMET = "HELMET",
 }
-export type TStatDic = { [K in STATS]?: number };
+export type TStatDic = { [K in STATS | string]?: number };
 export type TEquipment = {
   name: string;
   texture: number;
@@ -117,4 +118,10 @@ export type TConsumable = {
   name: string;
   value: number;
   texture: number;
+};
+
+export type TSkillValue = {
+  name: SKILLS;
+  value: number;
+  chance: number;
 };

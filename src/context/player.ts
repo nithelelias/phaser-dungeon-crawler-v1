@@ -1,16 +1,24 @@
 import { EQUIPEMENT, STATS, TEntityStats, TStatDic } from "../types/types";
-import { getEquipment } from "./inventory";
+import { getEquipment, resetInventory } from "./inventory";
+import { resetSkillSet } from "./skills";
+const DEFAULT_STATS = {
+  hp: 3,
+  speed: 1,
+  attack: 1,
+  defense: 1,
+  evation: 0,
+};
 
-const skillSet: [string, number][] = [["regen", 1]];
 const store = {
+  name: "bob",
+  version: 0,
   stats: {
-    hp: 3,
-    speed: 1,
-    attack: 1,
-    defense: 1,
-    evation: 0,
+    ...DEFAULT_STATS,
   },
-  skillSet,
+  calcStats: {
+    ...DEFAULT_STATS,
+  },
+
   currentHp: 3,
 };
 function clamp(v: number, min: number, max: number) {
@@ -19,14 +27,17 @@ function clamp(v: number, min: number, max: number) {
 function getCurrentLife() {
   return store.currentHp + 0;
 }
+function getMaxLife() {
+  return store.calcStats.hp + 0;
+}
 function setCurrentLife(hp: number) {
-  store.currentHp = clamp(hp, 0, store.stats.hp);
+  store.currentHp = clamp(hp, 0, store.calcStats.hp);
   return getCurrentLife();
 }
 function getBaseStats(): TEntityStats {
   return { ...store.stats };
 }
-function getCalcStats(): TEntityStats {
+function runCalcStats(): TEntityStats {
   const stats = { ...store.stats };
   const equiment = getEquipment();
 
@@ -50,15 +61,31 @@ function getCalcStats(): TEntityStats {
   };
 
   iterateEquipement();
+  store.calcStats = { ...stats };
+  store.version += 1;
   return stats;
 }
-function getSkillSet(): [string, number][] {
-  return [...store.skillSet];
+function getCalcStats(): TEntityStats {
+  return { ...store.calcStats };
+}
+function getStatsVersion() {
+  return store.version;
+}
+function reset() {
+  store.stats = { ...DEFAULT_STATS };
+  store.calcStats = { ...DEFAULT_STATS };
+
+  store.currentHp = store.stats.hp;
+  resetSkillSet();
+  resetInventory();
 }
 export default {
+  runCalcStats,
   getBaseStats,
   getCalcStats,
-  getSkillSet,
   getCurrentLife,
+  getMaxLife,
   setCurrentLife,
+  getStatsVersion,
+  reset,
 };

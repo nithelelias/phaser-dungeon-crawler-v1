@@ -6,8 +6,9 @@ export const MAP_MAX_SIZE = {
   height: 20,
 };
 export const FONTS = {
-  font1: "arcade",
-  font2: "oswald",
+  font1: "arcade", // PRINCIPAL FOR LARGE CONTENT TEXTS
+  font2: "miology", // FOR UI GENERAL
+  font3: "oswald", // FOR NOTIFICAIONS
 };
 const color = (code: string) => {
   return { hexa: "#" + code, int: parseInt("0x" + code) };
@@ -15,12 +16,16 @@ const color = (code: string) => {
 export const COLORS = {
   black: color("000000"),
   white: color("ffffff"),
-  red: color("e74645"),
-  primary: color("fb8500"),
-  primary2: color("ffb703"),
-  secundary: color("8ecae6"),
-  secundary2: color("219ebc"),
-  dark: color("023047"),
+  red: color("EA340B"), 
+  green: color("84C318"), 
+  text: color("96BBBB"),
+  primary: color("01161E"),
+  primary2: color("022B3B"),
+  secundary: color("96BBBB"),
+  secundary2: color("A9C7C7"),
+  accent: color("FF7700"),
+  error: color("EA340B"),
+  success: color("84C318"),
 };
 export const BATTLE_MOBS_ZONES: Record<number, { x: number; y: number }[]> = {
   1: [
@@ -105,4 +110,21 @@ export const CONTROLS: Record<string, string> = {
   ArrowDown: "down",
   s: "down",
   space: "action",
+};
+
+export const STATSALIAS: Record<string, string> = {
+  hp: "hp",
+  defense: "def",
+  attack: "atk",
+  evation: "ev",
+  speed: "spd",
+};
+
+export const COLORSBYQUALITYLEVEL: Record<number, number> = {
+  0: 0x889d9d,
+  1: 0xffffff,
+  2: 0x0070ff,
+  3: 0xa335ee,
+  4: 0xff8000,
+  5: 0xe6cc80,
 };

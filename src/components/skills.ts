@@ -1,8 +1,8 @@
 import { TILES } from "../data/resources";
+import { popIconEffectAtBattleEntity } from "../tweens/popUp";
 import { STATUSEFFECTS } from "../types/types";
 import iterateCount from "../utils/iterateCount";
 import random from "../utils/random";
-import { tweenPromise } from "../utils/tweenPromise";
 import BEntity from "./battleEntity";
 type TSkyllArgs = {
   damage: number;
@@ -44,7 +44,6 @@ export const OFFENSIVE_SKILLS: Record<
 export async function vampirism(args: TSkyllArgs) {
   // steal hp from target and recover that hp
   const hpToRecover = args.hplost * (args.skillValue / 100);
-  console.log(hpToRecover);
   args.entity.recoverHp(hpToRecover);
 
   await popIconEffectAtBattleEntity(args.entity, EFFECT_SKILL_ICONS.regen);
@@ -141,33 +140,4 @@ export async function projectile(args: TSkyllArgs) {
   });
 
   await Promise.all(promises);
-}
-
-export async function popIconEffectAtBattleEntity(
-  entity: BEntity,
-  iconEffect: number
-) {
-  const scene = entity.scene;
-  const icon = scene.add
-    .sprite(entity.x, entity.y - 4, TILES.name, iconEffect)
-    .setScale(0.2)
-    .setAlpha(0);
-
-  entity.parentContainer.add(icon);
-  await tweenPromise(icon, {
-    y: entity.y - 16,
-    scale: 1,
-    alpha: 1,
-    duration: 100,
-    ease: "sine.out",
-    hold: 100,
-  });
-  await tweenPromise(icon, {
-    y: entity.y - 60,
-    scale: 1,
-    alpha: 0,
-    duration: 200,
-    ease: "sine.out",
-  });
-  icon.destroy();
 }

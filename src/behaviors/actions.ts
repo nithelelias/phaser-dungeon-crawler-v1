@@ -10,6 +10,6 @@ export async function moveToCell(entity: TEntity, targetPosition: TCell) {
     x: coords.x,
     y: coords.y,
     duration: 120,
-    ease: "sine.inOut",
+    ease: "back.out",
   });
 }

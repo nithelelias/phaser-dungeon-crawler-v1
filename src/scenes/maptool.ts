@@ -40,8 +40,7 @@ export default class MapToolScene extends Phaser.Scene {
       if (col >= cols) {
         row++;
         col = 0;
-      }
-      //console.log(col, row);
+      } 
       const x = col * TILES.config.frameWidth,
         y = row * TILES.config.frameHeight;
       const img = this.add

@@ -1,5 +1,7 @@
+import { COLORS } from "../data/constants";
 import { TILES } from "../data/resources";
-import { STATUSEFFECTS, TDataEntity } from "../types/types";
+import { popTextAtBattleEntity } from "../tweens/popUp";
+import { STATUSEFFECTS, TDataEntity, TSkillValue } from "../types/types";
 import LifeBar from "../ui/lifeBar";
 import MemoryWeightRandom from "../utils/memoryWeightRandom";
 import { tweenPromise } from "../utils/tweenPromise";
@@ -15,7 +17,7 @@ export default class BEntity extends Phaser.GameObjects.Container {
     [STATUSEFFECTS.STUN]: 0,
     [STATUSEFFECTS.BURN]: 0,
   };
-  skills: [string, number][] = [];
+  skills: TSkillValue[] = [];
   isEnemy = true;
   lifeBar: LifeBar;
   evationRate: {
@@ -55,18 +57,22 @@ export default class BEntity extends Phaser.GameObjects.Container {
   isAlive() {
     return this.lifeValue > 0;
   }
-
+  onHit() {}
   recoverHp(value: number) {
+    popTextAtBattleEntity(this, "+" + value.toFixed(1), COLORS.green.hexa);
     this.lifeValue = Math.min(this.info.stats.hp, this.lifeValue + value);
     this.lifeBar.setValue(this.lifeValue);
   }
   async hit(damage: number) {
     const hplost = Math.max(0, this.lifeValue - damage);
     this.lifeValue -= damage;
+    popTextAtBattleEntity(this, "-" + damage.toFixed(1), COLORS.red.hexa);
     await this.shake();
+    this.onHit();
 
     if (this.lifeValue <= 0) {
       this.lifeValue = 0;
+
       //   this.destroy();
       this.sprite.setTint(0x111111);
       this.sprite.setFlipY(true);

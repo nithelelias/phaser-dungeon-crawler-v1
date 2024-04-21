@@ -1,8 +1,10 @@
 import BEntity from "../components/battleEntity";
 import createBattleTurn from "../components/battleTurn";
 import player from "../context/player";
+import { getSkillSet } from "../context/skills";
 import { BATTLE_MOBS_ZONES, COLORS, FONTS } from "../data/constants";
 import { TILES } from "../data/resources";
+import EventSystem from "../systems/eventSystem";
 import TurnManager, { ITurnAction } from "../systems/turnSystem";
 import { TDataEntity } from "../types/types";
 import EscapeButton from "../ui/escapeButton";
@@ -94,14 +96,13 @@ export default class BattleScene extends Phaser.Scene {
       texture: TILES.frames.charactes.default,
       stats: player.getCalcStats(),
     };
-    /*     console.log("BASE STATS", player.getBaseStats());
-    console.log("CALC STATS", playerData.stats); */
-    const playerEntity = new BEntity(this, -100, 0, playerData);
-    playerEntity.skills = player.getSkillSet();
-    /* 
-    playerEntity.skills.push(["block", 90]);
-    playerEntity.skills.push(["regen", 1]); */
 
+    const playerEntity = new BEntity(this, -100, 0, playerData);
+    playerEntity.skills = getSkillSet();
+    playerEntity.onHit = () => {
+      player.setCurrentLife(playerEntity.lifeValue);
+      EventSystem.current.playerLifeChange();
+    };
     playerEntity.isEnemy = false;
     const zones = BATTLE_MOBS_ZONES[Math.min(5, mobs.length)];
     const entityList = [playerEntity];
@@ -125,7 +126,7 @@ export default class BattleScene extends Phaser.Scene {
     this.add
       .text(this.scale.width / 2, this.scale.height / 2, "Battle ESCAPED", {
         fontSize: 48,
-        fontFamily: FONTS.font2,
+        fontFamily: FONTS.font1,
         color: COLORS.white.hexa,
         align: "center",
       })
@@ -150,6 +151,7 @@ export default class BattleScene extends Phaser.Scene {
           fontSize: 48,
           color: "#ffffff",
           align: "center",
+          fontFamily: FONTS.font3,
         }
       )
       .setOrigin(0.5);

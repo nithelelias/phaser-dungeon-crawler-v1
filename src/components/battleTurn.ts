@@ -1,14 +1,17 @@
-import { STATUSEFFECTS } from "../types/types";
+import { COLORS } from "../data/constants";
+import {
+  popIconEffectAtBattleEntity,
+  popTextAtBattleEntity,
+} from "../tweens/popUp";
+import { SKILLS, STATUSEFFECTS, TSkillValue } from "../types/types";
 import waitTime from "../ui/waitTime";
 import random from "../utils/random";
 import { tweenPromise } from "../utils/tweenPromise";
 import BEntity from "./battleEntity";
 import {
-  ACTION_SKILLS,
   DAMAGE_OVERTIME_SKILLS,
   EFFECT_SKILL_ICONS,
   OFFENSIVE_SKILLS,
-  popIconEffectAtBattleEntity,
 } from "./skills";
 
 export default function createBattleTurn(entity: BEntity) {
@@ -80,13 +83,13 @@ async function evadeAnimation(entity: BEntity, target: BEntity) {
 async function attack(entity: BEntity, target: BEntity) {
   let timesToAttack = 1;
   const repeatSkills = entity.skills
-    .filter((skilPair) => {
-      return skilPair[0] === ACTION_SKILLS.repeat;
+    .filter((skill) => {
+      return skill.name === SKILLS.repeat && calcChanceToUseSkill(skill);
     })
     .shift();
 
   if (repeatSkills) {
-    timesToAttack = Math.floor(repeatSkills[1]);
+    timesToAttack = Math.floor(repeatSkills.value);
   }
   while (timesToAttack > 0) {
     if (!target.isAlive()) {
@@ -98,11 +101,16 @@ async function attack(entity: BEntity, target: BEntity) {
       console.log("evaded!");
       await evadeAnimation(entity, target);
     } else {
-      const blocked = await willBeBlockedBySkill(target);
-      if (!blocked) {
-        const damage = calculateDamage(entity, target);
+      const damage = await calcDamageAfterBlock(
+        target,
+        calculateDamage(entity, target)
+      );
+
+      if (damage > 0) {
         const hplost = await target.hit(damage);
         await applyOffensiveSkills(damage, hplost, entity, target);
+      } else {
+        popTextAtBattleEntity(target, "blocked", COLORS.red.hexa);
       }
       await executeCounterIfHas(target, entity);
       await waitTime(entity.scene, 200);
@@ -126,14 +134,23 @@ async function applyOffensiveSkills(
   entity: BEntity,
   target: BEntity
 ) {
-  const skills: [string, number][] = entity.skills;
+  const skills: TSkillValue[] = entity.skills;
   const totalSkills = skills.length;
   for (let i = 0; i < totalSkills; i++) {
-    const skillName = skills[i][0];
-    const skillValue = skills[i][1];
-    if (OFFENSIVE_SKILLS.hasOwnProperty(skillName)) {
-      const skillFn = OFFENSIVE_SKILLS[skillName];
-      await skillFn({ damage, hplost, skillValue, entity, target });
+    const skill = skills[i];
+
+    if (OFFENSIVE_SKILLS.hasOwnProperty(skill.name)) {
+      const skillFn = OFFENSIVE_SKILLS[skill.name];
+
+      if (calcChanceToUseSkill(skill)) {
+        await skillFn({
+          damage,
+          hplost,
+          skillValue: skill.value,
+          entity,
+          target,
+        });
+      }
     }
   }
 }
@@ -179,29 +196,27 @@ async function executeCounterIfHas(entity: BEntity, target: BEntity) {
     return;
   }
   const skills = entity.skills;
-  const skill = skills.find((skill) => skill[0] === ACTION_SKILLS.counter);
-  if (skill) {
-    console.log("EXECUTE COUNTER");
+  const skill = skills.find((skill) => skill.name === SKILLS.counter);
+  if (skill && calcChanceToUseSkill(skill)) {
     attackAnimation(entity, target);
     const damage = calculateDamage(entity, target);
     await target.hit(damage);
   }
 }
 
-async function willBeBlockedBySkill(entity: BEntity) {
+async function calcDamageAfterBlock(entity: BEntity, damage: number) {
   if (!entity.isAlive()) {
-    return false;
+    return damage;
   }
   const skills = entity.skills;
-  const skill = skills.find((skill) => skill[0] === ACTION_SKILLS.block);
-  if (skill) {
-    const skillValue = skill[1];
-    if (random(0, 100) <= skillValue) {
-      popIconEffectAtBattleEntity(entity, EFFECT_SKILL_ICONS.block);
-      return true;
-    }
+  const skill = skills.find((skill) => skill.name === SKILLS.block);
+
+  if (skill && calcChanceToUseSkill(skill)) {
+    popIconEffectAtBattleEntity(entity, EFFECT_SKILL_ICONS.block);
+    return Math.max(0, damage - skill.value);
   }
-  return false;
+
+  return damage;
 }
 
 async function executeRegenIfHas(entity: BEntity) {
@@ -209,11 +224,16 @@ async function executeRegenIfHas(entity: BEntity) {
     return false;
   }
   const skills = entity.skills;
-  const skill = skills.find((skill) => skill[0] === ACTION_SKILLS.regen);
-  if (skill) {
-    const skillValue = skill[1] / 100;
-    entity.recoverHp(skillValue);
+  const skill = skills.find((skill) => skill.name === SKILLS.regen);
+
+  if (skill && calcChanceToUseSkill(skill)) {
+    entity.recoverHp(skill.value);
     await popIconEffectAtBattleEntity(entity, EFFECT_SKILL_ICONS.regen);
   }
+
   return false;
+}
+
+function calcChanceToUseSkill(skill: TSkillValue) {
+  return skill && skill.chance >= random(0, 100);
 }

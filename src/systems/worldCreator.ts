@@ -1,11 +1,13 @@
-import { addToInventory } from "../context/inventory";
+import { addToInventory, getEquipment } from "../context/inventory";
 import ROOMS from "../context/rooms";
-import { TILESIZE } from "../data/constants";
+import { addSkill } from "../context/skills";
 import { getRandomGear } from "../data/items";
 
 import { MAPS, TILES } from "../data/resources";
+import { popIconUp } from "../tweens/popUp";
 import {
   ITEM,
+  SKILLS,
   TCell,
   TCellEventType,
   TCoords,
@@ -14,7 +16,6 @@ import {
 } from "../types/types";
 import iterateCount from "../utils/iterateCount";
 import random from "../utils/random";
-import { tweenPromise } from "../utils/tweenPromise";
 import generateDungeonRoom from "./generateDungeonRoom";
 
 interface IWorldCreator {
@@ -24,7 +25,7 @@ interface IWorldCreator {
 export default function createWorldRooms(api: IWorldCreator) {
   const rooms = [
     {
-      id: "floor1",
+      id: "floor1",      
       texture: "floor1",
     },
     {
@@ -35,10 +36,18 @@ export default function createWorldRooms(api: IWorldCreator) {
       id: "floor3",
       texture: "floor3",
     },
+    {
+      id: "floor4",
+      texture: "floor4",
+    },
+    {
+      id: "floor5",
+      texture: "floor5",
+    },
   ];
 
   let lastRoom: TMapData | null = null;
-  rooms.forEach((roomInfo) => {
+  rooms.forEach((roomInfo, idx) => {
     const dungeon = generateDungeonRoom(roomInfo.id, roomInfo.texture);
     fillRoomWithStuff(dungeon, api);
     if (lastRoom) {
@@ -59,7 +68,7 @@ export default function createWorldRooms(api: IWorldCreator) {
     }
     lastRoom = dungeon;
 
-    ROOMS.addRoom(roomInfo.id, dungeon);
+    ROOMS.addRoom(roomInfo.id, dungeon, idx + 1);
   });
 }
 function gateTrigger(
@@ -99,6 +108,39 @@ function addTriggerEvent(
 function fillRoomWithStuff(dng: TMapData, api: IWorldCreator) {
   addChestOnRoom(dng);
   addEnemyOnRoom(dng, api);
+  addPickable(
+    dng,
+    {
+      col: dng.entrance.col + 1,
+      row: dng.entrance.row - 1,
+    },
+    TILES.frames.skills.bleed,
+    async () => {
+      addSkill(SKILLS.bleed);
+    }
+  );
+  addPickable(
+    dng,
+    {
+      col: dng.entrance.col + 1,
+      row: dng.entrance.row - 3,
+    },
+    TILES.frames.skills.bleed,
+    async () => {
+      addSkill(SKILLS.bleed);
+    }
+  );
+  addPickable(
+    dng,
+    {
+      col: dng.entrance.col + 3,
+      row: dng.entrance.row - 1,
+    },
+    TILES.frames.skills.vampirism,
+    async () => {
+      addSkill(SKILLS.vampirism);
+    }
+  );
 }
 
 function getCellsToUseIf(matrixMap: number[][], value: number = 0) {
@@ -136,8 +178,9 @@ function addChestOnRoom(dng: TMapData) {
     dng.data[0][cell.row][cell.col] = tiles.ground[0];
     dng.data[1][cell.row][cell.col] = TILES.frames.chest;
     dng.walls[cell.row][cell.col] = 0;
-
-    const item = getRandomGear();
+    const holder = {
+      item: getRandomGear(),
+    };
 
     addTriggerEvent(
       dng,
@@ -149,15 +192,20 @@ function addChestOnRoom(dng: TMapData) {
           return;
         }
         open = true;
-        dng.data[1][cell.row][cell.col] = TILES.frames.chest_open;
-        dng.dirty = true;
+        const currentEquipment = getEquipment()[holder.item.type];
         addToInventory({
           type: ITEM.EQUIPEMENT,
-          item,
+          item: holder.item,
         });
-
-        popIconUp(scene, coords, item.texture);
-        console.log("open chest ", item.name, item);
+        popIconUp(scene, coords, holder.item.texture);
+        if (currentEquipment) {
+          holder.item = currentEquipment;
+          open = false;
+          dng.data[1][cell.row][cell.col] = currentEquipment.texture;
+        } else {
+          dng.data[1][cell.row][cell.col] = TILES.frames.chest_open;
+        }
+        dng.dirty = true;
       }
     );
   };
@@ -212,33 +260,32 @@ function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
     addEnemyAt(cell);
   });
 }
-
-async function popIconUp(
-  scene: Phaser.Scene,
-  coords: { x: number; y: number },
-  iconTexture: number
+function addPickable(
+  dng: TMapData,
+  cell: TCell,
+  mapImage: number,
+  onPick: (scene: Phaser.Scene, coords: TCoords) => Promise<void>
 ) {
-  const halfTiLe = TILESIZE / 2;
-  const container = scene.add
-    .container(coords.x + halfTiLe, coords.y + halfTiLe, [
-      scene.add.sprite(0, 0, TILES.name, iconTexture),
-    ])
-    .setScale(0.2)
-    .setAlpha(0);
-  await tweenPromise(container, {
-    y: coords.y - halfTiLe,
-    scale: 1,
-    alpha: 1,
-    duration: 100,
-    ease: "sine.out",
-    hold: 500,
-  });
-  await tweenPromise(container, {
-    y: coords.y - TILESIZE * 2,
-    scale: 1,
-    alpha: 0,
-    duration: 200,
-    ease: "sine.out",
-  });
-  container.destroy();
+  const tiles = MAPS[dng.textureName];
+
+  dng.data[1][cell.row][cell.col] = mapImage;
+  if (dng.walls[cell.row][cell.col]) {
+    dng.data[0][cell.row][cell.col] = tiles.ground[0];
+    dng.walls[cell.row][cell.col] = 0;
+  }
+  addTriggerEvent(
+    dng,
+    cell,
+    TCellEventType.WALK,
+    [`pick-${dng.roomId}`],
+    async (scene: Phaser.Scene, coords: TCoords) => {
+      popIconUp(scene, coords, mapImage);
+      if (onPick) {
+        await onPick(scene, coords);
+      }
+      dng.data[1][cell.row][cell.col] = TILES.frames.__EMPTY;
+      delete dng.triggers[cell.row][cell.col];
+      dng.dirty = true;
+    }
+  );
 }

@@ -28,7 +28,7 @@ export default class EscapeButton extends Phaser.GameObjects.Container {
 
     const rect = scene.add
       .rectangle(0, 0, this.width, this.height, COLORS.primary.int)
-      .setOrigin(0.5);
+      .setOrigin(0.5).setBlendMode(Phaser.BlendModes.EXCLUSION)
     const backgroundRect = scene.add
       .rectangle(0, 0, this.width, this.height, COLORS.white.int)
       .setOrigin(0.5);
@@ -44,7 +44,7 @@ export default class EscapeButton extends Phaser.GameObjects.Container {
     };
     const onKeyDown = () => {
       escaping = true;
-      scene.input.keyboard!.off("keyup-SPACE", () => {
+      scene.input.keyboard!.once("keyup-SPACE", () => {
         escaping = false;
       });
     };

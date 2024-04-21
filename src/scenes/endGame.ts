@@ -30,6 +30,7 @@ export default class EndGame extends Phaser.Scene {
         this.cameras.main.fadeOut(1000);
         setTimeout(() => {
           this.scene.stop();
+          this.scene.stop("hub");
           this.scene.stop("game");
           this.scene.start("intro");
         }, 1500);

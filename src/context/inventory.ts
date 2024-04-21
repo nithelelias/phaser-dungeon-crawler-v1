@@ -1,6 +1,9 @@
 import { EQUIPEMENT, ITEM, TConsumable, TEquipment } from "../types/types";
-
-const invEquipment: Record<EQUIPEMENT, TEquipment | null> = {
+import player from "./player";
+const inventoryVersion = {
+  version: 1,
+};
+const invEquipment: Record<EQUIPEMENT | string, TEquipment | null> = {
   [EQUIPEMENT.WEAPON]: null,
   [EQUIPEMENT.SHIELD]: null,
   [EQUIPEMENT.HELMET]: null,
@@ -11,6 +14,7 @@ const invEquipment: Record<EQUIPEMENT, TEquipment | null> = {
 const invConsumables: Record<string, number> = {};
 export function setEquipment(type: EQUIPEMENT, item: TEquipment | null) {
   invEquipment[type] = item;
+  inventoryVersion.version++;
 }
 export function getEquipment() {
   return { ...invEquipment };
@@ -20,6 +24,7 @@ export function addConsumable(item: TConsumable) {
     invConsumables[item.name] = 0;
   }
   invConsumables[item.name] += 1;
+  inventoryVersion.version++;
 }
 
 export function consumeItem(itemName: string) {
@@ -27,6 +32,7 @@ export function consumeItem(itemName: string) {
     return false;
   }
   invConsumables[itemName]--;
+  inventoryVersion.version++;
   return true;
 }
 export function addToInventory(itemHolder: {
@@ -41,4 +47,17 @@ export function addToInventory(itemHolder: {
     const item = itemHolder.item as TConsumable;
     addConsumable(item);
   }
+  player.runCalcStats();
+}
+export function getInventoryVersion() {
+  return inventoryVersion.version;
+}
+export function resetInventory() {
+  inventoryVersion.version = 1;
+  Object.keys(invEquipment).forEach((key) => {
+    invEquipment[key as EQUIPEMENT] = null;
+  });
+  Object.keys(invConsumables).forEach((key) => {
+    delete invConsumables[key];
+  });
 }

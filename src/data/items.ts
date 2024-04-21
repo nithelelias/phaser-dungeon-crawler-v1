@@ -1,3 +1,4 @@
+import { getWorldLevel } from "../context/rooms";
 import {
   EQUIPEMENT,
   SKILLS,
@@ -6,6 +7,7 @@ import {
   TStatDic,
   WEAPON,
 } from "../types/types";
+import MemoryWeightRandom from "../utils/memoryWeightRandom";
 import random from "../utils/random";
 import { TILES } from "./resources";
 
@@ -121,10 +123,22 @@ export function getRandomWeapon(): TEquipment {
   return item;
 }
 
+const qualityRandom = MemoryWeightRandom([
+  [0, 50],
+  [1, 35],
+  [2, 15],
+  [3, 4],
+  [4, 1],
+]);
+const plusLevelRndm = MemoryWeightRandom([
+  [0, 6],
+  [1, 3],
+  [2, 2],
+]);
 function getRnadomItemLevel() {
-  const worldLevel = 1;
-  const quality = random(0, 5);
-  const itemLevel = random(worldLevel, worldLevel + 3);
+  const worldLevel = getWorldLevel();
+  const quality = qualityRandom.getRandom();
+  const itemLevel = worldLevel + plusLevelRndm.getRandom();
 
   return { worldLevel, quality, itemLevel };
 }

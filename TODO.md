@@ -1,10 +1,15 @@
 # h6 -> interfaz
 
-- se requiere una interfaz que logre ver los atributos la vida y las habilidades (HUB) en todo momento en pantalla.
+- se requiere una interfaz que logre ver los atributos la vida✅
+- EL HUB DEBE MOSTRAR las habilidades (HUB) en todo momento en pantalla.
 - EL HUB debe mostrar el piso donde se encuentra
-- EL HUB debe mostrar el equipamiento actual del personaje
-- EL HUB DEBE poder mostrar los atributos actuales del personaje
-- EL HUB debe poder mostrar el equipamiento del personaje
+- EL HUB debe mostrar el equipamiento actual del personaje✅
+- ARREGLAR QUE NO GENERE UN COFRE DONDE YA HAY UN EVENTO Y QUE SEA ACCESIBLE POR ALGUN LADO up,down,left,right
+
+# H8 -> IDIOMAS
+
+- se requiere poder tener los copys del juego en español e ingles en un archivo csv ✅
+- se debe mostrar el lenguaje juego sgun preferncias del suarios 
 
 ### ==============================================================================================================================
 

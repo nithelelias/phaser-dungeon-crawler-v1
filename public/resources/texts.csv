@@ -1,0 +1,47 @@
+ID;EN;ES
+floor;floor;piso
+life;life;vida
+atack;atack;ataque
+defense;defense;defensa
+speed;speed;velocidad
+evation;evation;evasion
+stats;stats;atributos
+skills;skills;habilidades
+equipement;equipement;equipamiento
+weapon;weapon;arma
+armor;armor;peto
+shield;shield;escudo
+helmet;helmet;casco
+ring;ring;anillo
+amulet;amulet;amuleto
+quality;quality;calidad
+normal;normal;normal
+uncommon;uncommon;poco comun
+rare;rare;raro
+epic;epic;epico
+mythic;mythic;mitico
+escape;escape;escapar
+hp;hp;hp
+def;def;def
+atk;atk;atq
+eva;eva;eva
+spd;spd;vel
+vampirism;vampirism;vampirismo
+poison;poison;envenenar
+bleed;bleed;sangrar
+burn;burn;quemar
+stun;stun;parálisis
+projectil;projectil;proyectil
+repeat;repeat;repetir
+counter;counter;counter
+block;block;bloquear
+regen;regen;regenerar
+chance;chance;Exito
+power;power;poder
+;;
+$skill_desc_bleed;$1% probability to deal $2 bleed damage over time;$1% de probabildad de hacer $2 de daño como sangrado en el tiempo
+floor1;Floor 1 cave entrance;Piso 1 entrada a la cueva
+floor2;Floor 2 deep cave;Piso 2 Profundo de la cueva
+floor3;Floor 3 forest cave;Piso 3 Bosque en la cueva
+floor4;Floor 4 cementery cave;Piso 4 Cementerio en la cueva
+floor5;Floor 5 prision cave;Piso 5 Prision

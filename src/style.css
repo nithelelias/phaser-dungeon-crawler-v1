@@ -2,13 +2,20 @@
   font-family: "arcade";
   font-style: normal;
   font-weight: normal;
-  src: local("Arcade Rounded"), url("resources/fonts/arcade/ARCADE_R.woff") format("woff");
+  src: url("resources/fonts/arcade/ARCADE_N.woff") format("woff");
 }
 @font-face {
   font-family: "oswald";
   font-style: normal;
   font-weight: normal;
-  src: local("Arcade Rounded"), url("resources/fonts/oswald/oswald_wght.ttf") format("trueformat");
+  src: url("resources/fonts/oswald.woff") format("woff");
+}
+
+@font-face {
+  font-family: "miology";
+  font-style: normal;
+  font-weight: normal;
+  src: url("resources/fonts/miology.woff") format("woff");
 }
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
@@ -24,7 +31,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
- 
+
 body {
   margin: 0;
   display: flex;
@@ -32,12 +39,11 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
- 
 
 #app {
- width: 100%;
- height: 100%;
- display: flex;
- justify-content: center;
- align-items: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

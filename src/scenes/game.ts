@@ -27,16 +27,17 @@ export default class GameScene extends Phaser.Scene {
   }
   create() {
     this.showMapTools();
+    this.scene.run("hub");
 
     RenderMapSystem.create(this).layers.forEach((layer) =>
       layer.setPipeline("Light2D")
     );
     EventSystem.create(this);
     this.player = createPlayer(this);
-    this.cameras.main.setZoom(5).startFollow(this.player.sprite);
+    this.cameras.main.setZoom(5).startFollow(this.player.container,true,.1, 0.1);
 
     this.lights
-      .addLight(this.player.sprite.x, this.player.sprite.y, 64)
+      .addLight(this.player.container.x, this.player.container.y, 64)
       .setIntensity(1.2);
 
     this.lights.enable().setAmbientColor(0x555555);
@@ -99,7 +100,7 @@ export default class GameScene extends Phaser.Scene {
         const event = roomData.triggers[position.row][position.col];
         if (event) {
           const coords = getCoordsOfCell(position.col, position.row);
-          console.log("event trigger IN", roomData.roomId, event.tag, position);
+       /*    console.log("event trigger IN", roomData.roomId, event.tag, position); */
           event.execute(this, coords).then(() => {});
         }
       } catch (error) {
@@ -111,7 +112,7 @@ export default class GameScene extends Phaser.Scene {
     const roomData = ROOMS.setCurrent(roomId)!;
     const player = this.player!;
     player.setPosition(entryPosition || roomData.entrance);
-    this.cameras.main.centerOn(player.sprite.x, player.sprite.y);
+    this.cameras.main.centerOn(player.container.x, player.container.y);
     roomData.dirty = true;
   }
   updateLightOnPlayer() {
@@ -119,8 +120,8 @@ export default class GameScene extends Phaser.Scene {
       return;
     }
     const light = this.lights.lights[0];
-    light.x = this.player.sprite.x + HALF_TILESIZE;
-    light.y = this.player.sprite.y + HALF_TILESIZE;
+    light.x = this.player.container.x + HALF_TILESIZE;
+    light.y = this.player.container.y + HALF_TILESIZE;
   }
   openBattle(mobs: TDataEntity[]) {
     this.cameras.main.postFX.addBlur(12);
@@ -129,6 +130,7 @@ export default class GameScene extends Phaser.Scene {
       mobs,
       callback: ({ win, escaped }: { escaped: boolean; win: boolean }) => {
         if (!win && !escaped) {
+          
           this.scene.run("endgame", { win: false });
 
           return;

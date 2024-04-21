@@ -1,3 +1,4 @@
+import { poison, projectile, stun, vampirism } from "../components/skills";
 import { TMapTiles } from "../types/types";
 
 export const TILES = {
@@ -41,6 +42,18 @@ export const TILES = {
       poison: 495,
       burn: 494,
       block: 364,
+    },
+    skills:{
+      bleed:190,
+      repeat:191,
+      counter:192,
+      projectile:193,      
+      vampirism:194,
+      regen:195,
+      block:196,
+      poison:197,
+      burn:198,
+      stun:199
     },
     projectile: {
       default: 311,

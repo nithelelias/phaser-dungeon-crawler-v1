@@ -23,9 +23,13 @@ export default class ProgressBar extends Phaser.GameObjects.Container {
       .setOrigin(0);
     this.add([backRect, progressRect]);
   }
+  setValue(v:number){
+    return this.setProgress(v);
+  }
   setProgress(progress: number) {
     this.progress = progress;
     this.update();
+    return this
   }
   update(): void {
     const progressRect = this.list[1] as Phaser.GameObjects.Rectangle;

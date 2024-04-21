@@ -1,4 +1,5 @@
-import { moveToCell } from "../behaviors/actions";
+import moveBehavior from "../behaviors/moveBehavior";
+import { HALF_TILESIZE, TILESIZE } from "../data/constants";
 import { TILES } from "../data/resources";
 import EventSystem from "../systems/eventSystem";
 import { TCell } from "../types/types";
@@ -7,26 +8,32 @@ import initController, { TKeyControlMap } from "./controller";
 
 export class Player {
   scene: Phaser.Scene;
+  container: Phaser.GameObjects.Container;
   sprite: Phaser.GameObjects.Sprite;
   position: TCell;
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.position = { col: 0, row: 0 };
-
     this.sprite = scene.add
-      .sprite(0, 0, TILES.name, TILES.frames.charactes.default)
-      .setOrigin(0);
+      .sprite(
+        HALF_TILESIZE,
+        TILESIZE,
+        TILES.name,
+        TILES.frames.charactes.default
+      )
+      .setOrigin(0.5, 1);
+    this.container = scene.add.container(0, 0, [this.sprite]);
   }
   setPosition(position: TCell) {
     this.position = position;
     const coords = getCoordsOfCell(position.col, position.row);
-    this.sprite.setPosition(coords.x, coords.y);
+    this.container.setPosition(coords.x, coords.y);
   }
 }
 
 function controlMovePlayer(player: Player) {
   let actionLock = false;
-
+  const moveToCell = moveBehavior();
   return initController(player.scene, (keydown: TKeyControlMap) => {
     if (actionLock) return;
     const moved = keydown.left || keydown.right || keydown.up || keydown.down;
