@@ -25,7 +25,7 @@ interface IWorldCreator {
 export default function createWorldRooms(api: IWorldCreator) {
   const rooms = [
     {
-      id: "floor1",      
+      id: "floor1",
       texture: "floor1",
     },
     {
@@ -168,10 +168,37 @@ function getCellsToUseIf(matrixMap: number[][], value: number = 0) {
   return freeToUse;
 }
 
+function isCellAccesible(dng: TMapData, cell: TCell) {
+  const isCellWalkable = (col: number, row: number) => {
+    return (
+      col >= 0 &&
+      col < dng.cols &&
+      row >= 0 &&
+      row < dng.rows &&
+      dng.walls[row][col] === 0
+    );
+  };
+  return (
+    isCellWalkable(cell.col, cell.row) ||
+    isCellWalkable(cell.col + 1, cell.row) ||
+    isCellWalkable(cell.col, cell.row + 1) ||
+    isCellWalkable(cell.col + 1, cell.row + 1)
+  );
+}
+
+function notCellsOnEventsAndAccesible(dng: TMapData, list: TCell[]) {
+  return list.filter((cell: TCell) => {
+    return !dng.triggers[cell.row][cell.col] && isCellAccesible(dng, cell);
+  });
+}
+
 function addChestOnRoom(dng: TMapData) {
   // MAX 3 CHEST per MAP? 80%, 40%  10%
   // GET 3 RANDOM NOT EMPTY POSITIONS ON MAP
-  const cellsToUse = getCellsToUseIf(dng.walls, 1);
+  const cellsToUse = notCellsOnEventsAndAccesible(
+    dng,
+    getCellsToUseIf(dng.walls, 1)
+  );
   const tiles = MAPS[dng.textureName];
   const addChestAt = (cell: TCell) => {
     let open = false;
@@ -220,7 +247,10 @@ function addEnemyOnRoom(dng: TMapData, api: IWorldCreator) {
   // GET 3 RANDOM NOT EMPTY POSITIONS ON MAP
   const totalEnemies = 3;
   const tiles = MAPS[dng.textureName];
-  const cellsToUse = getCellsToUseIf(dng.data[0], tiles.ground[0]);
+  const cellsToUse = notCellsOnEventsAndAccesible(
+    dng,
+    getCellsToUseIf(dng.data[0], tiles.ground[0])
+  );
   const MOBTEMPLATE = {
     name: "rat",
     texture: TILES.frames.charactes.rat,
