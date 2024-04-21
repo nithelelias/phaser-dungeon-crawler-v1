@@ -33,9 +33,9 @@ export default class EventSystem {
     scene.events.on("update", this.dispatcher, this);
   }
   static create(scene: Phaser.Scene) {
-    if (EventSystem.current) {
+   /*  if (EventSystem.current) {
       return EventSystem.current;
-    }
+    } */
     return new EventSystem(scene);
   }
   __createListener(eventName: string, callback: (...args: any) => void) {

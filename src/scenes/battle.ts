@@ -99,6 +99,8 @@ export default class BattleScene extends Phaser.Scene {
 
     const playerEntity = new BEntity(this, -100, 0, playerData);
     playerEntity.skills = getSkillSet();
+    playerEntity.lifeValue=player.getCurrentLife()
+    playerEntity.lifeBar.setValue(playerEntity.lifeValue);
     playerEntity.onHit = () => {
       player.setCurrentLife(playerEntity.lifeValue);
       EventSystem.current.playerLifeChange();
