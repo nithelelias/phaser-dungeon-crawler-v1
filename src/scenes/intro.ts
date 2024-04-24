@@ -1,4 +1,5 @@
 import player from "../context/player";
+import threat from "../context/threat";
 import { COLORS, FONTS } from "../data/constants";
 
 export default class IntroScene extends Phaser.Scene {
@@ -7,6 +8,7 @@ export default class IntroScene extends Phaser.Scene {
   }
   create() {
     player.reset();
+    threat.reset();
     this.add
       .text(this.scale.width / 2, 300, "Hey Bob!", {
         fontFamily: FONTS.font2,

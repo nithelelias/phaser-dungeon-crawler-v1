@@ -1,6 +1,7 @@
 import createPlayer, { Player } from "../components/player";
 
 import ROOMS from "../context/rooms";
+import threat from "../context/threat";
 import { HALF_TILESIZE } from "../data/constants";
 import { TILES } from "../data/resources";
 import EventSystem from "../systems/eventSystem";
@@ -34,7 +35,9 @@ export default class GameScene extends Phaser.Scene {
     );
     EventSystem.create(this);
     this.player = createPlayer(this);
-    this.cameras.main.setZoom(5).startFollow(this.player.container,true,.1, 0.1);
+    this.cameras.main
+      .setZoom(5)
+      .startFollow(this.player.container, true, 0.1, 0.1);
 
     this.lights
       .addLight(this.player.container.x, this.player.container.y, 64)
@@ -100,7 +103,7 @@ export default class GameScene extends Phaser.Scene {
         const event = roomData.triggers[position.row][position.col];
         if (event) {
           const coords = getCoordsOfCell(position.col, position.row);
-       /*    console.log("event trigger IN", roomData.roomId, event.tag, position); */
+          /*    console.log("event trigger IN", roomData.roomId, event.tag, position); */
           event.execute(this, coords).then(() => {});
         }
       } catch (error) {
@@ -130,11 +133,11 @@ export default class GameScene extends Phaser.Scene {
       mobs,
       callback: ({ win, escaped }: { escaped: boolean; win: boolean }) => {
         if (!win && !escaped) {
-          
           this.scene.run("endgame", { win: false });
 
           return;
         }
+        threat.increase();
         this.scene.resume("game");
         this.cameras.main.postFX.clear();
       },

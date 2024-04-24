@@ -1,9 +1,28 @@
+# H9 -> W - treath - battle
+- cada vez que ganas una batalla el nivel de amenza aumenta en la mazmorra.
+- cada piso de la mazmorra tiene un +1 el nivel de los mobs
 
+# H10 -> CARTAS
+- se debe esparcir cartas por toda la mazmorra en cada piso de 1 a 3 cartas
+- la carta se guarda en alguna parte del inventerio y debe ser accesible abriendo un panel para iterar las cartas y seleccionar la que se quiere leer
 
+# H11 -> TIENDAS
+- se debe crear un espacio una minicueva que sea una tienda que te permita comprar cosas
+- la tienda la tendra un mono que cambiara productos por monedas brillantes (shiny)
+
+# H12 ->  EVENTOS RIESGOSOS
+- para obtener mas skills o armaduras abra lugares escondidos que llevan a otra zona de la cueva que tendran eventos riesgosos.
+- huye de la roca.
+- que la laba no te toque.
+- cueva de arañas
+- empuja el puzzle
+
+# h13 -> hagamos el exterior 
+- 
 
 ### ==============================================================================================================================
 
-### ------------------- DONE ---------------------
+### --------------------------------------------------------- DONE -----------------------------------------------------------
 
 ### ==============================================================================================================================
 
